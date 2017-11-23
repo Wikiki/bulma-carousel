@@ -7,6 +7,23 @@
   margin: auto
   display: flex
 
+.hero-carousel
+  padding: 0
+  position: absolute
+  top: 0
+  left: 0
+  bottom: 0
+  left: 0
+  height: auto
+  border: none
+  margin: auto
+  display: flex
+  z-index: 0
+  + .hero-body,
+  + .hero-head,
+  + .hero-footer
+    z-index: 1
+
 .carousel-navigation
   flex-shrink: 0
   display: flex
@@ -68,6 +85,7 @@
     display: inline-block
     padding: 0
     margin: 0
+    min-width: 100%
   .title
     position: absolute
     left: 0
