@@ -1,0 +1,81 @@
+.carousel
+  position: relative
+  width: 100%
+  height: auto
+  min-height: 4em
+  border: none
+  margin: auto
+  display: flex
+
+.carousel-navigation
+  flex-shrink: 0
+  display: flex
+  align-items: center
+  justify-content: center
+  width: 22px
+
+.carousel-container
+  flex: 1
+  background: whitesmoke
+  display: flex
+  overflow: hidden
+  .carousel-nav-left,
+  .carousel-nav-right
+    position: absolute
+    top: calc(50% - 11px)
+    height: 2.2em
+    width: 2em
+    background: $white
+    background: rgba($white,0.7)
+    left: 0
+    display: flex
+    justify-content: center
+    align-items: center
+    &:hover
+      cursor: pointer
+  .carousel-nav-right
+    left: auto
+    right: 0
+
+.carousel-content
+  display: flex
+  flex: 1
+  left: -100%
+  transform: translate3d(100%,0,0)
+  position: relative
+
+.carousel-reverse
+  transform: translate3d(-100%,0,0)
+
+.carousel-animate
+  transform: none
+  transition: transform 1s ease-in-out
+
+.carousel-item
+  flex-shrink: 0
+  flex-grow: 1
+  display: flex
+  align-items: center
+  justify-content: center
+  border: none
+  box-sizing: border-box
+  min-width: 100%
+  background-size: cover
+  background-position: center center
+  position: relative
+  .is-background
+    position: relative
+    display: inline-block
+    padding: 0
+    margin: 0
+  .title
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0px
+    padding: 1.5em
+    margin: 0
+    text-align: center
+    background: $white
+    background: rgba($white, 0.6)
+    font-size: $size-7
