@@ -1,3 +1,13 @@
+$carousel-nav-background: rgba($white, 0.7) !default
+$carousel-title-background: rgba($white, 0.6) !default
+$carousel-title-size: $size-7 !default
+
+@mixin crossBrowser($property, $val)
+  -webkit-#{$property}: $val
+  -moz-#{$property}: $val
+  -ms-#{$property}: $val
+  #{$property}: $val
+
 .carousel
   position: relative
   width: 100%
@@ -9,23 +19,23 @@
 
 .hero
   position: relative
-
-.hero-carousel
-  padding: 0
-  position: absolute
-  top: 0
-  left: 0
-  bottom: 0
-  left: 0
-  height: auto
-  border: none
-  margin: auto
-  display: flex
-  z-index: 0
   + .hero-body,
   + .hero-head,
   + .hero-footer
     z-index: 1
+
+.hero-carousel
+  display: flex
+  position: absolute
+  top: 0
+  left: 0
+  bottom: 0
+  right: 0
+  height: auto
+  border: none
+  margin: auto
+  padding: 0
+  z-index: 0
 
 .carousel-navigation
   flex-shrink: 0
@@ -45,8 +55,7 @@
     top: calc(50% - 11px)
     height: 2.2em
     width: 2em
-    background: $white
-    background: rgba($white,0.7)
+    background: $carousel-nav-background
     left: 0
     display: flex
     justify-content: center
@@ -61,14 +70,15 @@
   display: flex
   flex: 1
   left: -100%
-  transform: translate3d(100%,0,0)
+  @include crossBrowser(transform, translate3d(100%,0,0))
   position: relative
 
 .carousel-reverse
-  transform: translate3d(-100%,0,0)
+  @include crossBrowser(transform, translate3d(-100%,0,0))
 
 .carousel-animate
-  transform: none
+  @include crossBrowser(transform, none)
+
   transition: transform 1s ease-in-out
 
 .carousel-item
@@ -97,6 +107,5 @@
     padding: 1.5em
     margin: 0
     text-align: center
-    background: $white
-    background: rgba($white, 0.6)
-    font-size: $size-7
+    background: $carousel-title-background
+    font-size: $carousel-title-size
