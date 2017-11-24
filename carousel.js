@@ -36,6 +36,13 @@ class Carousel {
         } else {
           newValue = ((index + 2) % nbItems);
         }
+        if (!newValue || newValue !== 2) {
+          item.style['z-index'] = '0';
+          item.classList.remove('is-active');
+        } else {
+          item.style['z-index'] = '1';
+          item.classList.add('is-active');
+        }
         item.style.order = newValue ? newValue : nbItems;
       });
     }
@@ -49,6 +56,7 @@ class Carousel {
     // Change order of element
     // Current order 2 visible become order 1
     this.setOrder('previous');
+
     // Enable transition to animate order 1 to order 2
     setTimeout(() => {
       this.carouselContent.classList.toggle('carousel-animate');
@@ -72,7 +80,7 @@ class Carousel {
 }
 
 window.onload = function() {
-  let carousels = document.querySelectorAll('.carousel');
+  let carousels = document.querySelectorAll('.carousel, .hero-carousel');
   if (carousels) {
     carousels.forEach(element => {
       new Carousel(element);

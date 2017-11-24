@@ -44,6 +44,7 @@ $carousel-title-size: $size-7 !default
   align-items: center
   justify-content: center
   width: 22px
+  z-index: 99
 
 .carousel-container
   flex: 1
@@ -62,26 +63,12 @@ $carousel-title-size: $size-7 !default
     justify-content: center
     align-items: center
     color: $carousel-nav-color
+    z-index: 99
     &:hover
       cursor: pointer
   .carousel-nav-right
     left: auto
     right: 0
-
-.carousel-content
-  display: flex
-  flex: 1
-  left: -100%
-  @include crossBrowser(transform, translate3d(100%,0,0))
-  position: relative
-
-.carousel-reverse
-  @include crossBrowser(transform, translate3d(-100%,0,0))
-
-.carousel-animate
-  @include crossBrowser(transform, none)
-
-  transition: transform 1s ease-in-out
 
 .carousel-item
   flex-shrink: 0
@@ -95,6 +82,9 @@ $carousel-title-size: $size-7 !default
   background-size: cover
   background-position: center center
   position: relative
+  max-height: 100%
+  max-width: 100%
+  overflow: hidden
   .is-background
     position: relative
     display: inline-block
@@ -111,3 +101,29 @@ $carousel-title-size: $size-7 !default
     text-align: center
     background: $carousel-title-background
     font-size: $carousel-title-size
+
+.carousel-content
+  display: flex
+  flex: 1
+  position: relative
+  &.carousel-animate-slide
+    left: -100%
+    @include crossBrowser(transform, translate3d(100%,0,0))
+  &.carousel-animate-fade
+    .carousel-item
+      @include crossBrowser(transition, opacity 1s ease-in-out)
+      position: absolute
+  &.carousel-animate
+    &.carousel-animate-slide
+      transition: all 1s ease-in-out
+      @include crossBrowser(transform, none)
+    &.carousel-animate-fade
+      .carousel-item
+        &.is-active
+          opacity: 1
+        &:not(.is-active)
+          opacity: 0
+
+.carousel-reverse
+  &.carousel-animate-slide
+    @include crossBrowser(transform, translate3d(-100%,0,0))
