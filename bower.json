@@ -1,0 +1,23 @@
+{
+  "name": "bulma-carousel",
+  "description": "Display a Image / Content carousel",
+  "main": "carousel.sass",
+  "authors": [
+    "Wikiki <wikiki@protonmail.com> (https://wikiki.github.io/bulma-extensions/overview)"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "Bulma",
+    "extensions",
+    "bulma",
+    "bulma.io"
+  ],
+  "homepage": "https://github.com/Wikiki/bulma-carousel",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
