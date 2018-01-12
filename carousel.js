@@ -29,7 +29,7 @@ class Carousel {
 
     let nbItems = this.items.length;
     if (nbItems) {
-      this.items.forEach((item, index) => {
+      [].forEach.call(this.items, function(item, index) {
         let newValue;
         if (item.style.order) {
           newValue = (parseInt(item.style.order, 10) + direction) % nbItems;
@@ -79,11 +79,9 @@ class Carousel {
   };
 }
 
-window.onload = function() {
-  let carousels = document.querySelectorAll('.carousel, .hero-carousel');
-  if (carousels) {
-    carousels.forEach(element => {
-      new Carousel(element);
-    })
-  }
-};
+document.addEventListener( 'DOMContentLoaded', function () {
+  var carousels = document.querySelectorAll('.carousel, .hero-carousel');
+  [].forEach.call(carousels, function(carousel) {
+      new Carousel(carousel);
+  });
+});
