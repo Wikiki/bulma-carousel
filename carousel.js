@@ -11,9 +11,17 @@ class Carousel {
 
     this.element.querySelector('.carousel-nav-left').addEventListener('click', (e) => {
       this.prevSlide();
+      if (this.autoplayInterval) {
+        clearInterval(this.autoplayInterval);
+        this.autoPlay(this.element.dataset.delay || 5000);
+      }
     }, false);
     this.element.querySelector('.carousel-nav-right').addEventListener('click', (e) => {
       this.nextSlide();
+      if (this.autoplayInterval) {
+        clearInterval(this.autoplayInterval);
+        this.autoPlay(this.element.dataset.delay || 5000);
+      }
     }, false);
 
     this.setOrder();
