@@ -17,6 +17,10 @@ class Carousel {
     }, false);
 
     this.setOrder();
+
+    if (this.element.dataset.autoplay && this.element.dataset.autoplay == "true") {
+      this.autoPlay(this.element.dataset.delay || 5000);
+    }
   }
 
   setOrder(direction){
@@ -77,6 +81,12 @@ class Carousel {
       this.carouselContent.classList.toggle('carousel-animate');
     }, 50);
   };
+
+  autoPlay(delay = 5000) {
+    this.autoplayInterval = setInterval(() => {
+      this.nextSlide();
+    }, delay);
+  }
 }
 
 document.addEventListener( 'DOMContentLoaded', function () {
