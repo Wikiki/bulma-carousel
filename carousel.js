@@ -1,3 +1,5 @@
+const MOUSE_EVENTS = ['click', 'touchstart'];
+
 class Carousel {
   constructor(element) {
     this.element = element;
@@ -9,20 +11,22 @@ class Carousel {
     this.carouselContent = this.element.querySelector('.carousel-content');
     this.items = this.carouselContent.querySelectorAll('.carousel-item');
 
-    this.element.querySelector('.carousel-nav-left').addEventListener('click', (e) => {
-      this.prevSlide();
-      if (this.autoplayInterval) {
-        clearInterval(this.autoplayInterval);
-        this.autoPlay(this.element.dataset.delay || 5000);
-      }
-    }, false);
-    this.element.querySelector('.carousel-nav-right').addEventListener('click', (e) => {
-      this.nextSlide();
-      if (this.autoplayInterval) {
-        clearInterval(this.autoplayInterval);
-        this.autoPlay(this.element.dataset.delay || 5000);
-      }
-    }, false);
+    MOUSE_EVENTS.forEach((event) => {
+      this.element.querySelector('.carousel-nav-left').addEventListener(event, (e) => {
+        this.prevSlide();
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoPlay(this.element.dataset.delay || 5000);
+        }
+      }, false);
+      this.element.querySelector('.carousel-nav-right').addEventListener(event, (e) => {
+        this.nextSlide();
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoPlay(this.element.dataset.delay || 5000);
+        }
+      }, false);
+    });
 
     this.setOrder();
 
