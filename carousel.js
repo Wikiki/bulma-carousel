@@ -12,6 +12,7 @@ class Carousel {
 
     MOUSE_EVENTS.forEach((event) => {
       this.element.querySelector('.carousel-nav-left').addEventListener(event, (e) => {
+        e.preventDefault();
         this.move('previous');
         if (this.autoplayInterval) {
           clearInterval(this.autoplayInterval);
@@ -19,6 +20,7 @@ class Carousel {
         }
       }, false);
       this.element.querySelector('.carousel-nav-right').addEventListener(event, (e) => {
+        e.preventDefault();
         this.move('next');
         if (this.autoplayInterval) {
           clearInterval(this.autoplayInterval);
