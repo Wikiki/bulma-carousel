@@ -8,19 +8,18 @@ class Carousel {
   }
 
   init() {
-    this.carouselContent = this.element.querySelector('.carousel-content');
-    this.items = this.carouselContent.querySelectorAll('.carousel-item');
+    this.items = Array.from(this.element.querySelectorAll('.carousel-item'));
 
     MOUSE_EVENTS.forEach((event) => {
       this.element.querySelector('.carousel-nav-left').addEventListener(event, (e) => {
-        this.prevSlide();
+        this.move('previous');
         if (this.autoplayInterval) {
           clearInterval(this.autoplayInterval);
           this.autoPlay(this.element.dataset.delay || 5000);
         }
       }, false);
       this.element.querySelector('.carousel-nav-right').addEventListener(event, (e) => {
-        this.nextSlide();
+        this.move('next');
         if (this.autoplayInterval) {
           clearInterval(this.autoplayInterval);
           this.autoPlay(this.element.dataset.delay || 5000);
@@ -28,82 +27,84 @@ class Carousel {
       }, false);
     });
 
-    this.setOrder();
+    this.initOrder();
 
-    if (this.element.dataset.autoplay && this.element.dataset.autoplay == "true") {
+    if (this.element.dataset.autoplay && this.element.dataset.autoplay == 'true') {
       this.autoPlay(this.element.dataset.delay || 5000);
     }
   }
 
-  setOrder(direction){
-    // initialize direction to change order
-    if (direction === 'previous') {
-      direction = 1;
-    } else if (direction === 'next') {
-      direction = -1;
-    }
+  initOrder() {
+    const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+    const currentActiveItemPos = this.items.indexOf(currentActiveItem);
+    const length = this.items.length;
 
-    let nbItems = this.items.length;
-    if (nbItems) {
-      [].forEach.call(this.items, function(item, index) {
-        let newValue;
-        if (item.style.order) {
-          newValue = (parseInt(item.style.order, 10) + direction) % nbItems;
-        } else {
-          newValue = ((index + 2) % nbItems);
-        }
-        if (!newValue || newValue !== 2) {
-          item.style['z-index'] = '0';
-          item.classList.remove('is-active');
-        } else {
-          item.style['z-index'] = '1';
-          item.classList.add('is-active');
-        }
-        item.style.order = newValue ? newValue : nbItems;
-      });
+    if (currentActiveItemPos) {
+      this.items.push(this.items.splice(0, currentActiveItemPos));
+    } else {
+      this.items.unshift(this.items.pop());
     }
+    this.setOrder();
   }
 
-  prevSlide(evt) {
-    // add reverse
-    this.carouselContent.classList.add('carousel-reverse');
-    // Disable transition to instant change order
-    this.carouselContent.classList.toggle('carousel-animate');
-    // Change order of element
-    // Current order 2 visible become order 1
-    this.setOrder('previous');
-
-    // Enable transition to animate order 1 to order 2
-    setTimeout(() => {
-      this.carouselContent.classList.toggle('carousel-animate');
-    }, 50);
+  setOrder() {
+    this.items.forEach((item, index) => {
+      if (index !== 1) {
+        item.style['z-index'] = '0';
+      } else {
+        item.style['z-index'] = '1';
+      }
+      item.style.order = index;
+    });
   }
 
-  nextSlide(evt) {
-    // remove reverse
-    this.carouselContent.classList.remove('carousel-reverse');
+  move(direction = 'next') {
+    if (this.items.length) {
+      const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+      let newActiveItem;
 
-    // Disable transition to instant change order
-    this.carouselContent.classList.toggle('carousel-animate');
-    // Change order of element
-    // Current order 2 visible become order 3
-    this.setOrder('next');
-    // Enable transition to animate order 3 to order 2
-    setTimeout(() => {
-      this.carouselContent.classList.toggle('carousel-animate');
-    }, 50);
-  };
+      currentActiveItem.classList.remove('is-active');
+
+      // initialize direction to change order
+      if (direction === 'previous') {
+        // Reorder items
+        this.items.unshift(this.items.pop());
+        // add reverse class
+        this.element.classList.add('is-reversing');
+      } else {
+        // Reorder items
+        this.items.push(this.items.shift());
+        // remove reverse class
+        this.element.classList.remove('is-reversing');
+      }
+
+      if (this.items.length >= 1) {
+        newActiveItem = this.items[1];
+      } else {
+        newActiveItem = this.items[0];
+      }
+      newActiveItem.classList.add('is-active');
+      this.setOrder();
+
+      // Disable transition to instant change order
+      this.element.classList.toggle('carousel-animated');
+      // Enable transition to animate order 1 to order 2
+      setTimeout(() => {
+        this.element.classList.toggle('carousel-animated');
+      }, 50);
+    }
+  }
 
   autoPlay(delay = 5000) {
     this.autoplayInterval = setInterval(() => {
-      this.nextSlide();
+      this.move('next');
     }, delay);
   }
 }
 
-document.addEventListener( 'DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
   var carousels = document.querySelectorAll('.carousel, .hero-carousel');
   [].forEach.call(carousels, function(carousel) {
-      new Carousel(carousel);
+    new Carousel(carousel);
   });
 });
