@@ -6,58 +6,12 @@ $carousel-border: none
 $carousel-animation-speed: .5s
 $carousel-animation-method: ease-in-out
 
-@mixin crossBrowser($property, $val)
-  -webkit-#{$property}: $val
-  -moz-#{$property}: $val
-  -ms-#{$property}: $val
-  #{$property}: $val
+$carousel-sizes: (2, 3, 4, 5) !default
 
-.carousel
+=carousel-item
+  display: block
   position: relative
-  .carousel-container
-    position: relative
-    border: $carousel-border
-    @include crossBrowser(display, flex)
-    margin: 0
-    padding: 0
-    @include crossBrowser(transform, translateX(100%))
-    left: -100%
-    &.is-reversing
-      .carousel-container
-        @include crossBrowser(transform, translateX(-100%))
-
-.carousel-navigation
-  @include crossBrowser(display, flex)
-  justify-content: space-around
-  width: 100%
-  .carousel-nav-left,
-  .carousel-nav-right
-    padding: 1em
-  &.is-centered
-    justify-content: center
-  &.is-overlay
-    align-items: center
-    justify-content: space-between
-    z-index: 20
-    .carousel-nav-left,
-    .carousel-nav-right
-      height: 2.2em
-      width: 2em
-      background: $carousel-nav-background
-      @include crossBrowser(display, flex)
-      justify-content: center
-      align-items: center
-      color: $carousel-nav-color
-      z-index: 99
-      &:hover
-        cursor: pointer
-    .carousel-nav-right
-      left: auto
-      right: 0
-
-.carousel-item
-  position: relative
-  @include crossBrowser(flex, 1 0 100%)
+  flex: 1 0 100%
   &.has-background
     .is-background
       object-fit: cover
@@ -75,30 +29,79 @@ $carousel-animation-method: ease-in-out
     background: $carousel-title-background
     font-size: $carousel-title-size
 
+=carousel-container
+  width: 100%
+  position: relative
+  border: $carousel-border
+  display: flex
+  margin: 0
+  padding: 0
+  left: -100%
+  transform: translateX(100%)
+  @content
+
+=carousel
+  position: relative
+  overflow: hidden
+  .carousel-container
+    +carousel-container
+      .carousel-item
+        +carousel-item
+  .carousel-navigation
+    +carousel-navigation
+  &.is-reversing
+    .carousel-container
+      transform: translateX(-100%)
+    @each $size in $carousel-sizes
+      &.is-#{$size}
+        .carousel-container
+          transform: translateX(calc(-100% / #{$size}))
+
+// Carousel Navigation (includes previous - next actions elements)
+=carousel-navigation
+  display: flex
+  justify-content: space-around
+  width: 100%
+  .carousel-nav-left,
+  .carousel-nav-right
+    padding: 1em
+  &.is-centered
+    justify-content: center
+  &.is-overlay
+    align-items: center
+    justify-content: space-between
+    z-index: 20
+    .carousel-nav-left,
+    .carousel-nav-right
+      height: 2.2em
+      width: 2em
+      background: $carousel-nav-background
+      display: flex
+      justify-content: center
+      align-items: center
+      color: $carousel-nav-color
+      z-index: 99
+      &:hover
+        cursor: pointer
+    .carousel-nav-right
+      left: auto
+      right: 0
+
+// Sizes
 .carousel
-  &.is-3
-    .carousel-item
-      padding: 1em
-      @include crossBrowser(flex, 1 0 33.333%)
-  &.is-4
-    .carousel-item
-      padding: 1em
-      @include crossBrowser(flex, 1 0 25%)
-  &.is-5
-    .carousel-item
-      padding: 1em
-      @include crossBrowser(flex, 1 0 20%)
+  +carousel
+  @each $size in $carousel-sizes
+    &.is-#{$size}
+      .carousel-container
+        left: calc(-100% / #{$size})
+        transform: translateX(calc(100% / #{$size}))
+        .carousel-item
+          padding: 1em
+          flex-basis: calc(100% / #{$size})
 
-.hero
-  &.has-carousel
-    position: relative
-    + .hero-body,
-    + .hero-head,
-    + .hero-footer
-      z-index: 1
-
-.hero-carousel
-  @include crossBrowser(display, flex)
+// Hero Carousel
+=hero-carousel
+  display: flex
   position: absolute
   top: 0
   left: 0
@@ -110,32 +113,33 @@ $carousel-animation-method: ease-in-out
   padding: 0
   z-index: 0
 
+.hero
+  &.has-carousel
+    position: relative
+    + .hero-body,
+    + .hero-head,
+    + .hero-footer
+      z-index: 1
+    .hero-carousel
+      +hero-carousel
+
+.hero-carousel
+  +carousel
+
+// Animation
 .carousel,
 .hero-carousel
-  overflow: hidden
-  &.carousel-animated
-    .carousel-container
-      @include crossBrowser(transform, none)
-    &.is-3
+  &.carousel-animate-slide
+    &.carousel-animated
       .carousel-container
-        @include crossBrowser(transform, translateX(calc(100% / 3)))
-    &.is-4
-      .carousel-container
-        @include crossBrowser(transform, translateX(75%))
-    &.is-5
-      .carousel-container
-        @include crossBrowser(transform, translateX(80%))
-    &.carousel-animate-slide
-      .carousel-container
-        @include crossBrowser(transition, transform $carousel-animation-speed $carousel-animation-method)
+        transform: none
+        transition: transform $carousel-animation-speed $carousel-animation-method
   &.carousel-animate-fade
-    .carousel-container
-      width: 100%
     .carousel-item
       position: absolute
       width: 100%
       height: 100%
-      @include crossBrowser(transition, opacity $carousel-animation-speed $carousel-animation-method)
+      transition: opacity $carousel-animation-speed $carousel-animation-method
       &.is-active
         opacity: 1
       &:not(.is-active)
