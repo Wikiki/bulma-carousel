@@ -11,22 +11,28 @@ class Carousel {
     this.items = Array.from(this.element.querySelectorAll('.carousel-item'));
 
     MOUSE_EVENTS.forEach((event) => {
-      this.element.querySelector('.carousel-nav-left').addEventListener(event, (e) => {
-        e.preventDefault();
-        this.move('previous');
-        if (this.autoplayInterval) {
-          clearInterval(this.autoplayInterval);
-          this.autoPlay(this.element.dataset.delay || 5000);
-        }
-      }, false);
-      this.element.querySelector('.carousel-nav-right').addEventListener(event, (e) => {
-        e.preventDefault();
-        this.move('next');
-        if (this.autoplayInterval) {
-          clearInterval(this.autoplayInterval);
-          this.autoPlay(this.element.dataset.delay || 5000);
-        }
-      }, false);
+      let previousControl = this.element.querySelector('.carousel-nav-left');
+      let nextControl = this.element.querySelector('.carousel-nav-right');
+      if (previousControl) {
+        previousControl.addEventListener(event, (e) => {
+          e.preventDefault();
+          this.move('previous');
+          if (this.autoplayInterval) {
+            clearInterval(this.autoplayInterval);
+            this.autoPlay(this.element.dataset.delay || 5000);
+          }
+        }, false);
+      }
+      if (nextControl) {
+        nextControl.addEventListener(event, (e) => {
+          e.preventDefault();
+          this.move('next');
+          if (this.autoplayInterval) {
+            clearInterval(this.autoplayInterval);
+            this.autoPlay(this.element.dataset.delay || 5000);
+          }
+        }, false);
+      }
     });
 
     this.initOrder();
