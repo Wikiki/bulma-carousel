@@ -1,6 +1,6 @@
 {
   "name": "bulma-carousel",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Display a Image / Content carousel",
   "main": "carousel.sass",
   "scripts": {
