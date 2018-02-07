@@ -1,6 +1,6 @@
 {
   "name": "bulma-carousel",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Display a Image / Content carousel",
   "main": "carousel.sass",
   "scripts": {
@@ -22,15 +22,30 @@
     "url": "https://github.com/Wikiki/bulma-carousel/issues"
   },
   "homepage": "https://github.com/Wikiki/bulma-carousel#readme",
+  "scripts": {
+    "build": "gulp"
+  },
   "devDependencies": {
-    "bulma": "^0.6.1"
+    "@babel/core": "^7.0.0-beta.39",
+    "@babel/preset-env": "^7.0.0-beta.39",
+    "babel-core": "^7.0.0-beta.3",
+    "bulma": "^0.6.2",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^4.1.0",
+    "gulp-babel": "^7.0.1",
+    "gulp-clean-css": "^3.9.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-postcss": "^7.0.1",
+    "gulp-sass": "^3.1.0",
+    "gulp-uglify": "^3.0.0",
+    "run-sequence": "^2.2.1"
   },
   "files": [
-    "carousel.sass",
-    "bulma-carousel.css",
-    "bulma-carousel.min.css",
-    "carousel.js",
-    "carousel.min.js",
+    "dist/carousel.sass",
+    "dist/bulma-carousel.min.css",
+    "dist/carousel.js",
+    "dist/carousel.min.js",
     "LICENSE",
     "README.md"
   ]
