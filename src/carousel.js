@@ -1,6 +1,6 @@
 const MOUSE_EVENTS = ['click', 'touchstart'];
 
-class Carousel {
+export default class Carousel {
   constructor(element) {
     this.element = element;
 
