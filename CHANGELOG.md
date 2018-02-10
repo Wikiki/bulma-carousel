@@ -1,3 +1,13 @@
+<a name="0.3.9"></a>
+## [0.3.9](https://github.com/Wikiki/bulma-carousel/compare/0.3.8...0.3.9) (2018-02-10)
+
+
+### Bug Fixes
+
+* **swipe:** Set image draggable attribute to false ([4262599](https://github.com/Wikiki/bulma-carousel/commit/4262599))
+
+
+
 <a name="0.3.8"></a>
 ## [0.3.8](https://github.com/Wikiki/bulma-carousel/compare/0.3.7...0.3.8) (2018-02-10)
 

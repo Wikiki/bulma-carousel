@@ -2,7 +2,7 @@
   "name": "bulma-carousel",
   "description": "Display a Image / Content carousel",
   "main": "carousel.sass",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "authors": [
     "Wikiki <wikiki@protonmail.com> (https://wikiki.github.io/bulma-extensions/overview)"
   ],
