@@ -2,7 +2,7 @@
   "name": "bulma-carousel",
   "version": "0.3.7",
   "description": "Display a Image / Content carousel",
-  "main": "carousel.sass",
+  "main": "dist/bulma-carousel.sass",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -47,10 +47,10 @@
     "run-sequence": "^2.2.1"
   },
   "files": [
-    "dist/carousel.sass",
+    "dist/bulma-carousel.sass",
     "dist/bulma-carousel.min.css",
-    "dist/carousel.js",
-    "dist/carousel.min.js",
+    "dist/bulma-carousel.js",
+    "dist/bulma-carousel.min.js",
     "LICENSE",
     "README.md"
   ]
