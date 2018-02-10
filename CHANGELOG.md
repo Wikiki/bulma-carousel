@@ -1,3 +1,14 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/Wikiki/bulma-carousel/compare/0.3.11...1.0.0) (2018-02-10)
+
+
+### Features
+
+* **gulp:** Add Rollup in scripts build task ([fc3bbf8](https://github.com/Wikiki/bulma-carousel/commit/fc3bbf8))
+* **package:** Add Rollup dependencies ([d4774a5](https://github.com/Wikiki/bulma-carousel/commit/d4774a5))
+
+
+
 <a name="0.3.11"></a>
 ## [0.3.11](https://github.com/Wikiki/bulma-carousel/compare/0.3.10...0.3.11) (2018-02-10)
 
