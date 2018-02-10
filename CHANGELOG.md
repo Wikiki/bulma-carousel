@@ -1,3 +1,15 @@
+<a name="0.3.8"></a>
+## [0.3.8](https://github.com/Wikiki/bulma-carousel/compare/0.3.7...0.3.8) (2018-02-10)
+
+
+### Bug Fixes
+
+* **gulp:** Correct dist filenames ([60e278a](https://github.com/Wikiki/bulma-carousel/commit/60e278a))
+* **package:** Correct file paths ([b188514](https://github.com/Wikiki/bulma-carousel/commit/b188514))
+* **travis:** Remove configuration ([c6112c8](https://github.com/Wikiki/bulma-carousel/commit/c6112c8))
+
+
+
 <a name="0.3.7"></a>
 ## [0.3.7](https://github.com/Wikiki/bulma-carousel/compare/v0.1.0...v0.3.7) (2018-02-09)
 
