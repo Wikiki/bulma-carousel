@@ -1,4 +1,7 @@
-export default class Carousel {
+var bulmaCarousel = (function () {
+'use strict';
+
+class Carousel {
   constructor(selector) {
     // Determine click event depending on if we are on Touch device or not
     this._clickEvent = ('ontouchstart' in window) ? 'touchstart' : 'click';
@@ -87,8 +90,6 @@ export default class Carousel {
   _initOrder() {
     const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
     const currentActiveItemPos = this.items.indexOf(currentActiveItem);
-    const length = this.items.length;
-
     if (currentActiveItemPos) {
       this.items.push(this.items.splice(0, currentActiveItemPos));
     } else {
@@ -128,7 +129,7 @@ export default class Carousel {
         x: e.clientX,
         y: e.clientY
       }
-    }
+    };
   }
 
   /**
@@ -141,7 +142,7 @@ export default class Carousel {
     this._touch.end = {
       x: e.clientX,
       y: e.clientY
-    }
+    };
 
     this._handleGesture();
   }
@@ -233,3 +234,7 @@ document.addEventListener('DOMContentLoaded', function() {
     new Carousel(carousel);
   });
 });
+
+return Carousel;
+
+}());
