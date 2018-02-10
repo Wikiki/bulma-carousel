@@ -19,6 +19,10 @@ export default class Carousel {
    */
   init() {
     this.items = Array.from(this.element.querySelectorAll('.carousel-item'));
+    this.items.forEach((item) => {
+      let img = item.querySelector('img');
+      img.setAttribute('draggable', false);
+    });
     this.computedStyle = window.getComputedStyle(this.element);
 
     this.previousControl = this.element.querySelector('.carousel-nav-left');
