@@ -1,3 +1,13 @@
+<a name="0.3.10"></a>
+## [0.3.10](https://github.com/Wikiki/bulma-carousel/compare/0.3.9...0.3.10) (2018-02-10)
+
+
+### Bug Fixes
+
+* **gulp:** Use UMD modules style ([90905d5](https://github.com/Wikiki/bulma-carousel/commit/90905d5))
+
+
+
 <a name="0.3.9"></a>
 ## [0.3.9](https://github.com/Wikiki/bulma-carousel/compare/0.3.8...0.3.9) (2018-02-10)
 
