@@ -34,7 +34,7 @@ class Carousel {
     this._bindEvents();
     this._initOrder();
 
-    if (this.element.dataset._autoPlay && this.element.dataset._autoPlay == 'true') {
+    if (this.element.dataset.autoPlay && this.element.dataset.autoPlay == 'true') {
       this._autoPlay(this.element.dataset.delay || 5000);
     }
   }
