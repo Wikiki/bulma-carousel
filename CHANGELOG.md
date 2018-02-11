@@ -1,3 +1,13 @@
+<a name="1.0.3"></a>
+## [1.0.3](https://github.com/Wikiki/bulma-carousel/compare/1.0.2...1.0.3) (2018-02-11)
+
+
+### Bug Fixes
+
+* **navigation:** is-reversing SASS rule was wrong ([77cc7f1](https://github.com/Wikiki/bulma-carousel/commit/77cc7f1))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/Wikiki/bulma-carousel/compare/1.0.1...1.0.2) (2018-02-11)
 
