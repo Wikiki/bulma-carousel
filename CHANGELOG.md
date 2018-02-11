@@ -1,3 +1,67 @@
+<a name="1.0.0"></a>
+# [1.0.0](https://github.com/Wikiki/bulma-carousel/compare/0.3.11...1.0.0) (2018-02-10)
+
+
+### Features
+
+* **gulp:** Add Rollup in scripts build task ([fc3bbf8](https://github.com/Wikiki/bulma-carousel/commit/fc3bbf8))
+* **package:** Add Rollup dependencies ([d4774a5](https://github.com/Wikiki/bulma-carousel/commit/d4774a5))
+
+
+
+<a name="0.3.11"></a>
+## [0.3.11](https://github.com/Wikiki/bulma-carousel/compare/0.3.10...0.3.11) (2018-02-10)
+
+
+
+<a name="0.3.10"></a>
+## [0.3.10](https://github.com/Wikiki/bulma-carousel/compare/0.3.9...0.3.10) (2018-02-10)
+
+
+### Bug Fixes
+
+* **gulp:** Use UMD modules style ([90905d5](https://github.com/Wikiki/bulma-carousel/commit/90905d5))
+
+
+
+<a name="0.3.9"></a>
+## [0.3.9](https://github.com/Wikiki/bulma-carousel/compare/0.3.8...0.3.9) (2018-02-10)
+
+
+### Bug Fixes
+
+* **swipe:** Set image draggable attribute to false ([4262599](https://github.com/Wikiki/bulma-carousel/commit/4262599))
+
+
+
+<a name="0.3.8"></a>
+## [0.3.8](https://github.com/Wikiki/bulma-carousel/compare/0.3.7...0.3.8) (2018-02-10)
+
+
+### Bug Fixes
+
+* **gulp:** Correct dist filenames ([60e278a](https://github.com/Wikiki/bulma-carousel/commit/60e278a))
+* **package:** Correct file paths ([b188514](https://github.com/Wikiki/bulma-carousel/commit/b188514))
+* **travis:** Remove configuration ([c6112c8](https://github.com/Wikiki/bulma-carousel/commit/c6112c8))
+
+
+
+<a name="0.3.7"></a>
+## [0.3.7](https://github.com/Wikiki/bulma-carousel/compare/v0.1.0...v0.3.7) (2018-02-09)
+
+
+### Bug Fixes
+
+* **bower:** Add missing version ([2a6e9a3](https://github.com/Wikiki/bulma-carousel/commit/2a6e9a3))
+
+
+### Features
+
+* **gulp:** Add gulp dependencies ([45e8c95](https://github.com/Wikiki/bulma-carousel/commit/45e8c95))
+* **gulp:** Add release task ([0a17340](https://github.com/Wikiki/bulma-carousel/commit/0a17340))
+
+
+
 # Change Log
 
 ## [Unreleased](https://github.com/wikiki/bulma-carousel/tree/HEAD)
