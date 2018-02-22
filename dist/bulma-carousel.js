@@ -30,6 +30,18 @@ class Carousel {
 
     this.previousControl = this.element.querySelector('.carousel-nav-left');
     this.nextControl = this.element.querySelector('.carousel-nav-right');
+    if (this.items.length <= 1) {
+      const carouselContainer = this.element.querySelector('.carousel-container');
+      if (carouselContainer) {
+        carouselContainer.style.left = '0';
+      }
+      if (this.previousControl) {
+        this.previousControl.style.display = 'none';
+      }
+      if (this.nextControl) {
+        this.nextControl.style.display = 'none';
+      }
+    }
 
     this._bindEvents();
     this._initOrder();
@@ -89,6 +101,10 @@ class Carousel {
    */
   _initOrder() {
     const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+    if (!currentActiveItem) {
+      this.items[0].classList.add('is-active');
+      currentActiveItem = this.items[0];
+    }
     const currentActiveItemPos = this.items.indexOf(currentActiveItem);
     if (currentActiveItemPos) {
       this.items.push(this.items.splice(0, currentActiveItemPos));
