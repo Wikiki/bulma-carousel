@@ -1,3 +1,13 @@
+<a name="1.0.5"></a>
+## [1.0.5](https://github.com/Wikiki/bulma-carousel/compare/1.0.4...1.0.5) (2018-02-22)
+
+
+### Bug Fixes
+
+* **display:** One Image display ([c1a667a](https://github.com/Wikiki/bulma-carousel/commit/c1a667a))
+
+
+
 <a name="1.0.4"></a>
 ## [1.0.4](https://github.com/Wikiki/bulma-carousel/compare/1.0.3...1.0.4) (2018-02-11)
 
