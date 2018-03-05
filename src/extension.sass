@@ -50,6 +50,8 @@ $carousel-sizes: (2, 3, 4, 5) !default
   .carousel-navigation
     +carousel-navigation
   &.is-reversing
+    .carousel-container
+      transform: translateX(-100%)
     @each $size in $carousel-sizes
       &.is-#{$size}
         .carousel-container
