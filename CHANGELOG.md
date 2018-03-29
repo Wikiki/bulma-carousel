@@ -1,3 +1,13 @@
+<a name="1.0.7"></a>
+## [1.0.7](https://github.com/Wikiki/bulma-carousel/compare/1.0.5...1.0.7) (2018-03-29)
+
+
+### Bug Fixes
+
+* **navigation:** [#17](https://github.com/Wikiki/bulma-carousel/issues/17) ([1355319](https://github.com/Wikiki/bulma-carousel/commit/1355319))
+
+
+
 <a name="1.0.6"></a>
 ## [1.0.6](https://github.com/Wikiki/bulma-carousel/compare/1.0.5...1.0.6) (2018-03-29)
 
