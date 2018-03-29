@@ -28,7 +28,7 @@ export default class Carousel {
     this.previousControl = this.element.querySelector('.carousel-nav-left');
     this.nextControl = this.element.querySelector('.carousel-nav-right');
     if (this.items.length <= 1) {
-      const carouselContainer = this.element.querySelector('.carousel-container');
+      let carouselContainer = this.element.querySelector('.carousel-container');
       if (carouselContainer) {
         carouselContainer.style.left = '0';
       }
@@ -97,13 +97,13 @@ export default class Carousel {
    * @return {void}
    */
   _initOrder() {
-    const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+    let currentActiveItem = this.element.querySelector('.carousel-item.is-active');
     if (!currentActiveItem) {
       this.items[0].classList.add('is-active');
       currentActiveItem = this.items[0];
     }
-    const currentActiveItemPos = this.items.indexOf(currentActiveItem);
-    const length = this.items.length;
+    let currentActiveItemPos = this.items.indexOf(currentActiveItem);
+    let length = this.items.length;
 
     if (currentActiveItemPos) {
       this.items.push(this.items.splice(0, currentActiveItemPos));
@@ -168,7 +168,7 @@ export default class Carousel {
    * @return {void}
    */
   _handleGesture() {
-    const ratio = {
+    let ratio = {
       horizontal: (this._touch.end.x - this._touch.start.x) / parseInt(this.computedStyle.getPropertyValue('width')),
       vertical: (this._touch.end.y - this._touch.start.y) / parseInt(this.computedStyle.getPropertyValue('height'))
     };
@@ -190,7 +190,7 @@ export default class Carousel {
    */
   _slide(direction = 'next') {
     if (this.items.length) {
-      const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+      let currentActiveItem = this.element.querySelector('.carousel-item.is-active');
       let newActiveItem;
 
       currentActiveItem.classList.remove('is-active');
