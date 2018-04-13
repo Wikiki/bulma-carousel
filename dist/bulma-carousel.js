@@ -100,7 +100,7 @@ class Carousel {
    * @return {void}
    */
   _initOrder() {
-    const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+    let currentActiveItem = this.element.querySelector('.carousel-item.is-active');
     if (!currentActiveItem) {
       this.items[0].classList.add('is-active');
       currentActiveItem = this.items[0];
