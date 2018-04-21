@@ -190,7 +190,7 @@ export default class Carousel {
    */
   _slide(direction = 'next') {
     if (this.items.length) {
-      const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+      let currentActiveItem = this.element.querySelector('.carousel-item.is-active');
       let newActiveItem;
 
       currentActiveItem.classList.remove('is-active');
