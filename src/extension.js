@@ -9,6 +9,7 @@ export default class Carousel {
         : selector;
     // An invalid selector or non-DOM node has been provided.
     if (!this.element) {
+      console.log(selector);
       throw new Error('An invalid selector or non-DOM node has been provided.');
     }
 
@@ -124,10 +125,12 @@ export default class Carousel {
     const length = this.items.length;
 
     if (currentActiveItemPos) {
-      this.items.push(this.items.splice(0, currentActiveItemPos));
+      //  this.items.push(this.items.splice(0, currentActiveItemPos));
+      this.items.push(this.items.shift());
     } else {
       this.items.unshift(this.items.pop());
     }
+
     this._setOrder();
   }
 
@@ -138,7 +141,7 @@ export default class Carousel {
   _setOrder() {
     this.items.forEach((item, index) => {
       if (index !== 1) {
-        item.style['z-index'] = '0';
+        item.style['z-index'] = '1';
       } else {
         item.style['z-index'] = '1';
       }
@@ -232,7 +235,7 @@ export default class Carousel {
         this.element.classList.remove('is-reversing');
       }
 
-      if (this.items.length >= 1) {
+      if (this.items.length > 1) {
         newActiveItem = this.items[1];
       } else {
         newActiveItem = this.items[0];
@@ -268,8 +271,10 @@ export default class Carousel {
    */
   static attach() {
     var carousels = document.querySelectorAll('.carousel, .hero-carousel');
-    [].forEach.call(carousels, function(carousel) {
-      new Carousel(carousel);
+    carousels.forEach(el => {
+      setTimeout(() => {
+        new Carousel(el);
+      }, 100);
     });
   }
 }
