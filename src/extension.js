@@ -141,7 +141,7 @@ export default class Carousel {
   _setOrder() {
     this.items.forEach((item, index) => {
       if (index !== 1) {
-        item.style['z-index'] = '1';
+        item.style['z-index'] = '0';
       } else {
         item.style['z-index'] = '1';
       }
