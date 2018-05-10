@@ -1,11 +1,15 @@
 export default class Carousel {
   constructor(selector) {
     // Determine click event depending on if we are on Touch device or not
-    this._clickEvent = ('ontouchstart' in window) ? 'touchstart' : 'click';
+    this._clickEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
 
-    this.element = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    this.element =
+      typeof selector === 'string'
+        ? document.querySelector(selector)
+        : selector;
     // An invalid selector or non-DOM node has been provided.
     if (!this.element) {
+      console.log(selector);
       throw new Error('An invalid selector or non-DOM node has been provided.');
     }
 
@@ -19,7 +23,7 @@ export default class Carousel {
    */
   init() {
     this.items = Array.from(this.element.querySelectorAll('.carousel-item'));
-    this.items.forEach((item) => {
+    this.items.forEach(item => {
       let img = item.querySelector('img');
       img.setAttribute('draggable', false);
     });
@@ -28,7 +32,9 @@ export default class Carousel {
     this.previousControl = this.element.querySelector('.carousel-nav-left');
     this.nextControl = this.element.querySelector('.carousel-nav-right');
     if (this.items.length <= 1) {
-      const carouselContainer = this.element.querySelector('.carousel-container');
+      const carouselContainer = this.element.querySelector(
+        '.carousel-container'
+      );
       if (carouselContainer) {
         carouselContainer.style.left = '0';
       }
@@ -43,7 +49,10 @@ export default class Carousel {
     this._bindEvents();
     this._initOrder();
 
-    if (this.element.dataset.autoplay && this.element.dataset.autoplay == 'true') {
+    if (
+      this.element.dataset.autoplay &&
+      this.element.dataset.autoplay == 'true'
+    ) {
       this._autoPlay(this.element.dataset.delay || 5000);
     }
   }
@@ -55,38 +64,46 @@ export default class Carousel {
    */
   _bindEvents() {
     if (this.previousControl) {
-      this.previousControl.addEventListener(this._clickEvent, (e) => {
-        e.preventDefault();
-        this._slide('previous');
-        if (this._autoPlayInterval) {
-          clearInterval(this._autoPlayInterval);
-          this._autoPlay(this.element.dataset.delay || 5000);
-        }
-      }, false);
+      this.previousControl.addEventListener(
+        this._clickEvent,
+        e => {
+          e.preventDefault();
+          this._slide('previous');
+          if (this._autoPlayInterval) {
+            clearInterval(this._autoPlayInterval);
+            this._autoPlay(this.element.dataset.delay || 5000);
+          }
+        },
+        false
+      );
     }
     if (this.nextControl) {
-      this.nextControl.addEventListener(this._clickEvent, (e) => {
-        e.preventDefault();
-        this._slide('next');
-        if (this._autoPlayInterval) {
-          clearInterval(this._autoPlayInterval);
-          this._autoPlay(this.element.dataset.delay || 5000);
-        }
-      }, false);
+      this.nextControl.addEventListener(
+        this._clickEvent,
+        e => {
+          e.preventDefault();
+          this._slide('next');
+          if (this._autoPlayInterval) {
+            clearInterval(this._autoPlayInterval);
+            this._autoPlay(this.element.dataset.delay || 5000);
+          }
+        },
+        false
+      );
     }
 
     // Bind swipe events
-    this.element.addEventListener('touchstart', (e) => {
+    this.element.addEventListener('touchstart', e => {
       this._swipeStart(e);
     });
-    this.element.addEventListener('mousedown', (e) => {
+    this.element.addEventListener('mousedown', e => {
       this._swipeStart(e);
     });
 
-    this.element.addEventListener('touchend', (e) => {
+    this.element.addEventListener('touchend', e => {
       this._swipeEnd(e);
     });
-    this.element.addEventListener('mouseup', (e) => {
+    this.element.addEventListener('mouseup', e => {
       this._swipeEnd(e);
     });
   }
@@ -97,7 +114,9 @@ export default class Carousel {
    * @return {void}
    */
   _initOrder() {
-    let currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+    let currentActiveItem = this.element.querySelector(
+      '.carousel-item.is-active'
+    );
     if (!currentActiveItem) {
       this.items[0].classList.add('is-active');
       currentActiveItem = this.items[0];
@@ -106,10 +125,12 @@ export default class Carousel {
     const length = this.items.length;
 
     if (currentActiveItemPos) {
-      this.items.push(this.items.splice(0, currentActiveItemPos));
+      //  this.items.push(this.items.splice(0, currentActiveItemPos));
+      this.items.push(this.items.shift());
     } else {
       this.items.unshift(this.items.pop());
     }
+
     this._setOrder();
   }
 
@@ -144,7 +165,7 @@ export default class Carousel {
         x: e.clientX,
         y: e.clientY
       }
-    }
+    };
   }
 
   /**
@@ -157,7 +178,7 @@ export default class Carousel {
     this._touch.end = {
       x: e.clientX,
       y: e.clientY
-    }
+    };
 
     this._handleGesture();
   }
@@ -169,8 +190,12 @@ export default class Carousel {
    */
   _handleGesture() {
     const ratio = {
-      horizontal: (this._touch.end.x - this._touch.start.x) / parseInt(this.computedStyle.getPropertyValue('width')),
-      vertical: (this._touch.end.y - this._touch.start.y) / parseInt(this.computedStyle.getPropertyValue('height'))
+      horizontal:
+        (this._touch.end.x - this._touch.start.x) /
+        parseInt(this.computedStyle.getPropertyValue('width')),
+      vertical:
+        (this._touch.end.y - this._touch.start.y) /
+        parseInt(this.computedStyle.getPropertyValue('height'))
     };
 
     if (ratio.horizontal > ratio.vertical && ratio.horizontal > 0.25) {
@@ -190,7 +215,9 @@ export default class Carousel {
    */
   _slide(direction = 'next') {
     if (this.items.length) {
-      const currentActiveItem = this.element.querySelector('.carousel-item.is-active');
+      const currentActiveItem = this.element.querySelector(
+        '.carousel-item.is-active'
+      );
       let newActiveItem;
 
       currentActiveItem.classList.remove('is-active');
@@ -208,7 +235,7 @@ export default class Carousel {
         this.element.classList.remove('is-reversing');
       }
 
-      if (this.items.length >= 1) {
+      if (this.items.length > 1) {
         newActiveItem = this.items[1];
       } else {
         newActiveItem = this.items[0];
@@ -236,16 +263,18 @@ export default class Carousel {
       this._slide('next');
     }, delay);
   }
-}
 
-/**
- * Initiate all DOM element containing carousel class
- * @method
- * @return {[type]} [description]
- */
-document.addEventListener('DOMContentLoaded', function() {
-  var carousels = document.querySelectorAll('.carousel, .hero-carousel');
-  [].forEach.call(carousels, function(carousel) {
-    new Carousel(carousel);
-  });
-});
+  /**
+   * Initiate all DOM element containing carousel class
+   * @method
+   * @return {[type]} [description]
+   */
+  static attach() {
+    var carousels = document.querySelectorAll('.carousel, .hero-carousel');
+    carousels.forEach(el => {
+      setTimeout(() => {
+        new Carousel(el);
+      }, 100);
+    });
+  }
+}
