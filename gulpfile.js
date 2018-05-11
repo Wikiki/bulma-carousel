@@ -103,7 +103,8 @@ gulp.task('build:scripts', function() {
           ]
         })]
       }, {
-        format: 'umd'
+        format: 'umd',
+        name: camelCase(package.name)
       }
     ).on('error', function(err) {
       gutil.log(gutil.colors.red('[Error]'), err.toString())
