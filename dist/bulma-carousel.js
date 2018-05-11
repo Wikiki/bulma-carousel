@@ -173,6 +173,7 @@ class Carousel extends EventEmitter {
     let forceHiddenNavigation = false;
 
     this.computedStyle = window.getComputedStyle(this.carousel);
+    this.carouselWidth = parseInt(this.computedStyle.getPropertyValue('width'), 10);
 
     this.carouselContainer = this.carousel.querySelector('.carousel-container');
     this.carouselItems = this.carousel.querySelectorAll('.carousel-item');
@@ -180,8 +181,6 @@ class Carousel extends EventEmitter {
 
     // Detect which animation is setup and auto-calculate size and transformation
     if (this.carousel.dataset.size && !this.carousel.classList.contains('carousel-animate-fade')) {
-      this.carouselWidth = parseInt(this.computedStyle.getPropertyValue('width'), 10);
-
       if (this.carousel.dataset.size >= this.carouselItemsArray.length) {
         this.offset = 0;
         forceHiddenNavigation = true;
@@ -201,9 +200,16 @@ class Carousel extends EventEmitter {
     // If animation is fade then force carouselContainer size (due to the position: absolute)
     if (this.carousel.classList.contains('carousel-animate-fade') && this.carouselItems.length) {
       let img = this.carouselItems[0].querySelector('img');
-      img.onload = () => {
-        this.carouselContainer.style.height = img.naturalWidth + 'px';
-      };
+      let scale = 1;
+      if (img.naturalWidth) {
+        scale = this.carouselWidth / img.naturalWidth;
+        this.carouselContainer.style.height = (img.naturalHeight * scale) + 'px';
+      } else {
+        img.onload = () => {
+          scale = this.carouselWidth / img.naturalWidth;
+          this.carouselContainer.style.height = (img.naturalHeight * scale) + 'px';
+        };
+      }
     }
 
     this.currentItem = {
