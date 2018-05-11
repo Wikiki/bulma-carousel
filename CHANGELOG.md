@@ -1,3 +1,38 @@
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/Wikiki/bulma-carousel/compare/1.1.0...2.0.0) (2018-05-11)
+
+
+### Bug Fixes
+
+* **gulp:** compilations tasks ([dbe24d9](https://github.com/Wikiki/bulma-carousel/commit/dbe24d9))
+
+
+
+<a name="1.0.11"></a>
+## [1.0.11](https://github.com/Wikiki/bulma-carousel/compare/1.0.10...1.0.11) (2018-03-05)
+
+
+
+<a name="1.0.10"></a>
+## [1.0.10](https://github.com/Wikiki/bulma-carousel/compare/1.0.9...1.0.10) (2018-02-22)
+
+
+
+<a name="1.0.9"></a>
+## [1.0.9](https://github.com/Wikiki/bulma-carousel/compare/1.0.8...1.0.9) (2018-02-22)
+
+
+
+<a name="1.0.8"></a>
+## [1.0.8](https://github.com/Wikiki/bulma-carousel/compare/1.0.6...1.0.8) (2018-02-22)
+
+
+
+<a name="1.0.6"></a>
+## [1.0.6](https://github.com/Wikiki/bulma-carousel/compare/1.0.5...1.0.6) (2018-02-22)
+
+
+
 <a name="1.0.11"></a>
 ## [1.0.11](https://github.com/Wikiki/bulma-carousel/compare/1.0.10...1.0.11) (2018-03-05)
 
