@@ -1,3 +1,8 @@
+<a name="2.0.7"></a>
+## [2.0.7](https://github.com/Wikiki/bulma-carousel/compare/2.0.6...2.0.7) (2018-05-11)
+
+
+
 <a name="2.0.6"></a>
 ## [2.0.6](https://github.com/Wikiki/bulma-carousel/compare/2.0.5...2.0.6) (2018-05-11)
 

@@ -74,7 +74,7 @@ export default class Carousel extends EventEmitter {
       img.onload = () => {
         this.carouselContainer.style.height = img.naturalWidth + 'px';
       }
-    };
+    }
 
     this.currentItem = {
       carousel: this.carousel,

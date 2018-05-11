@@ -87,7 +87,7 @@ gulp.task('clean:styles', function() {
 // appropriate location.
 gulp.task('build:scripts', function() {
   return gulp
-    .src([paths.src + paths.jsPattern])
+    .src([paths.src + mainJsFile])
     .pipe(rollup({
         plugins: [babel({
           babelrc: false,
