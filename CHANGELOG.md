@@ -1,11 +1,19 @@
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/Wikiki/bulma-carousel/compare/1.1.0...2.0.0) (2018-05-11)
 
+- Replace is-size-* by attribute data-size
+- New attach static method to instantiate carousels (default selector = '.carousel, .hero-carousel')
+
+### New Features
+- Events: add events management (carousel:ready ; carousel:slide:before ; carousel:slide:after)
 
 ### Bug Fixes
-
-* **gulp:** compilations tasks ([dbe24d9](https://github.com/Wikiki/bulma-carousel/commit/dbe24d9))
-
+- #6: carousel-navigation is-overlay
+- #7: Animated Slide
+- #22: Integration with third-party applications
+- #24: Sass reference error
+- #31: Bugs: The carousel does not work when you click on return the image is lost.
+- #33: Carousel autoplay doesn't work
 
 
 <a name="1.0.11"></a>
