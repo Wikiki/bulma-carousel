@@ -1,6 +1,6 @@
 {
   "name": "bulma-carousel",
-  "version": "1.0.11",
+  "version": "2.0.7",
   "description": "Display a Image / Content carousel",
   "main": "dist/bulma-carousel.sass",
   "scripts": {
@@ -29,7 +29,7 @@
     "@babel/core": "^7.0.0-beta.39",
     "@babel/preset-env": "^7.0.0-beta.39",
     "babel-core": "^7.0.0-beta.3",
-    "bulma": "^0.6.2",
+    "bulma": "latest",
     "camelcase": "^4.1.0",
     "conventional-github-releaser": "^2.0.0",
     "del": "^3.0.0",
@@ -44,8 +44,7 @@
     "gulp-conventional-changelog": "^1.1.11",
     "gulp-git": "^2.5.1",
     "gulp-postcss": "^7.0.1",
-    "gulp-sass": "^3.1.0",
-    "gulp-sourcemaps": "^2.6.4",
+    "gulp-sass": "latest",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
     "rollup-plugin-babel": "^3.0.3",
