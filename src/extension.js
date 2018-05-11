@@ -1,19 +1,37 @@
-export default class Carousel {
-  constructor(selector) {
-    // Determine click event depending on if we are on Touch device or not
-    this._clickEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
+import 'EventEmitter' from 'events';
 
-    this.element =
-      typeof selector === 'string'
-        ? document.querySelector(selector)
-        : selector;
+export default class Carousel extends EventEmitter {
+  constructor(selector) {
+    super();
+
+    this._clickEvents = ['touchstart', 'click'];
+
+    this.carousel = typeof selector === 'string'
+      ? document.querySelector(selector)
+      : selector;
     // An invalid selector or non-DOM node has been provided.
-    if (!this.element) {
-      console.log(selector);
+    if (!this.carousel) {
       throw new Error('An invalid selector or non-DOM node has been provided.');
     }
 
     this.init();
+  }
+
+  /**
+   * Initiate all DOM element containing carousel class
+   * @method
+   * @return {Array} Array of all Carousel instances
+   */
+  static attach(selector = '.carousel, .hero-carousel') {
+    let carouselInstances = new Array();
+
+    const carousels = document.querySelectorAll(selector);
+    [].forEach.call(carousels, carousel => {
+      setTimeout(() => {
+        carouselInstances.push(new Carousel(carousel));
+      }, 100);
+    });
+    return carouselInstances;
   }
 
   /**
@@ -22,21 +40,76 @@ export default class Carousel {
    * @return {void}
    */
   init() {
-    this.items = Array.from(this.element.querySelectorAll('.carousel-item'));
-    this.items.forEach(item => {
-      let img = item.querySelector('img');
-      img.setAttribute('draggable', false);
-    });
-    this.computedStyle = window.getComputedStyle(this.element);
+    this.computedStyle = window.getComputedStyle(this.carousel);
 
-    this.previousControl = this.element.querySelector('.carousel-nav-left');
-    this.nextControl = this.element.querySelector('.carousel-nav-right');
-    if (this.items.length <= 1) {
-      const carouselContainer = this.element.querySelector(
-        '.carousel-container'
-      );
-      if (carouselContainer) {
-        carouselContainer.style.left = '0';
+    this.carouselContainer = this.carousel.querySelector('.carousel-container');
+    this.carouselItems = this.carousel.querySelectorAll('.carousel-item');
+    this.carouselItemsArray = Array.from(this.carouselItems);
+
+    // Detect which animation is setup and auto-calculate size and transformation
+    if (this.carousel.dataset.size && !this.carousel.classList.contains('carousel-animate-fade')) {
+      this.carouselWidth = parseInt(this.computedStyle.getPropertyValue('width'), 10);
+
+      if (this.carousel.dataset.size => this.carouselItemsArray.length) {
+        this.offset = 0;
+        this._initNavigation(true);
+      } else {
+        this.offset = this.carouselWidth / this.carousel.dataset.size
+        this._initNavigation();
+      }
+      this.carouselContainer.style.left = 0 - this.offset + 'px';
+      this.carouselContainer.style.transform = `translateX(${this.offset}px)`;
+      [].forEach.call(this.carouselItems, carouselItem => {
+        carouselItem.style.flexBasis = `${this.offset}px`;
+      });
+    }
+
+    // If animation is fade then force carouselContainer size (due to the position: absolute)
+    if (this.carousel.classList.contains('carousel-animate-fade') && this.carouselItems.length) {
+      let img = this.carouselItems[0].querySelector('img');
+      img.onload = () => {
+        this.carouselContainer.style.height = img.naturalWidth + 'px';
+      }
+    };
+
+    this.currentItem = {
+      carousel: this.carousel,
+      node: null,
+      pos: -1
+    };
+    this.currentItem.node = this.carousel.querySelector('.carousel-item.is-active'),
+    this.currentItem.pos = this.currentItem.node
+      ? this.carouselItemsArray.indexOf(this.currentItem.node)
+      : -1;
+    if (!this.currentItem.node) {
+      this.currentItem.node = this.carouselItems[0];
+      this.currentItem.node.classList.add('is-active');
+      this.currentItem.pos = 0;
+    }
+
+    this._setOrder();
+
+    if (this.carousel.dataset.autoplay && this.carousel.dataset.autoplay == 'true') {
+      this._autoPlay(this.carousel.dataset.delay || 5000);
+    }
+
+    this._bindEvents();
+
+    this.emit('carousel:ready', this.currentItem);
+  }
+
+  /**
+   * Initiate Navigation area and Previous/Next buttons
+   * @method _initNavigation
+   * @return {[type]}        [description]
+   */
+  _initNavigation(forceHidden = false) {
+    this.previousControl = this.carousel.querySelector('.carousel-nav-left');
+    this.nextControl = this.carousel.querySelector('.carousel-nav-right');
+
+    if (this.carouselItems.length <= 1 || forceHidden) {
+      if (this.carouselContainer) {
+        this.carouselContainer.style.left = '0';
       }
       if (this.previousControl) {
         this.previousControl.style.display = 'none';
@@ -44,16 +117,6 @@ export default class Carousel {
       if (this.nextControl) {
         this.nextControl.style.display = 'none';
       }
-    }
-
-    this._bindEvents();
-    this._initOrder();
-
-    if (
-      this.element.dataset.autoplay &&
-      this.element.dataset.autoplay == 'true'
-    ) {
-      this._autoPlay(this.element.dataset.delay || 5000);
     }
   }
 
@@ -64,89 +127,97 @@ export default class Carousel {
    */
   _bindEvents() {
     if (this.previousControl) {
-      this.previousControl.addEventListener(
-        this._clickEvent,
-        e => {
+      this._clickEvents.forEach(clickEvent => {
+        this.previousControl.addEventListener(clickEvent, e => {
           e.preventDefault();
           this._slide('previous');
           if (this._autoPlayInterval) {
             clearInterval(this._autoPlayInterval);
-            this._autoPlay(this.element.dataset.delay || 5000);
+            this._autoPlay(this.carousel.dataset.delay || 5000);
           }
-        },
-        false
-      );
+        });
+      });
     }
+
     if (this.nextControl) {
-      this.nextControl.addEventListener(
-        this._clickEvent,
-        e => {
+      this._clickEvents.forEach(clickEvent => {
+        this.nextControl.addEventListener(clickEvent, e => {
           e.preventDefault();
           this._slide('next');
           if (this._autoPlayInterval) {
             clearInterval(this._autoPlayInterval);
-            this._autoPlay(this.element.dataset.delay || 5000);
+            this._autoPlay(this.carousel.dataset.delay || 5000);
           }
-        },
-        false
-      );
+        });
+      });
     }
 
     // Bind swipe events
-    this.element.addEventListener('touchstart', e => {
+    this.carousel.addEventListener('touchstart', e => {
       this._swipeStart(e);
     });
-    this.element.addEventListener('mousedown', e => {
+    this.carousel.addEventListener('mousedown', e => {
       this._swipeStart(e);
     });
 
-    this.element.addEventListener('touchend', e => {
+    this.carousel.addEventListener('touchend', e => {
       this._swipeEnd(e);
     });
-    this.element.addEventListener('mouseup', e => {
+    this.carousel.addEventListener('mouseup', e => {
       this._swipeEnd(e);
     });
   }
 
   /**
-   * Initiate slides order
-   * @method _initOrder
-   * @return {void}
+   * Find next item to display
+   * @method _next
+   * @param  {Node} element Current Node element
+   * @return {Node}         Next Node element
    */
-  _initOrder() {
-    let currentActiveItem = this.element.querySelector(
-      '.carousel-item.is-active'
-    );
-    if (!currentActiveItem) {
-      this.items[0].classList.add('is-active');
-      currentActiveItem = this.items[0];
-    }
-    const currentActiveItemPos = this.items.indexOf(currentActiveItem);
-    const length = this.items.length;
-
-    if (currentActiveItemPos) {
-      //  this.items.push(this.items.splice(0, currentActiveItemPos));
-      this.items.push(this.items.shift());
+  _next(element) {
+    if (element.nextElementSibling) {
+      return element.nextElementSibling;
     } else {
-      this.items.unshift(this.items.pop());
+      return this.carouselItems[0];
     }
-
-    this._setOrder();
   }
 
   /**
-   * Update each slide order
+   * Find previous item to display
+   * @method _previous
+   * @param  {Node}  element Current Node element
+   * @return {Node}          Previous Node element
+   */
+  _previous(element) {
+    if (element.previousElementSibling) {
+      return element.previousElementSibling;
+    } else {
+      return this.carouselItems[this.carouselItems.length - 1];
+    }
+  }
+
+  /**
+   * Update each item order
    * @method _setOrder
    */
   _setOrder() {
-    this.items.forEach((item, index) => {
-      if (index !== 1) {
-        item.style['z-index'] = '0';
-      } else {
-        item.style['z-index'] = '1';
-      }
-      item.style.order = index;
-    });
+    this.currentItem.node.style.order = '1';
+    this.currentItem.node.style.zIndex = '1';
+    let item = this.currentItem.node;
+    let i,
+      j,
+      ref;
+    for (
+      i = j = 2, ref = this.carouselItemsArray.length; (
+        2 <= ref
+        ? j <= ref
+        : j >= ref); i = 2 <= ref
+      ? ++j
+      : --j) {
+      item = this._next(item);
+      item.style.order = '' + i % this.carouselItemsArray.length;
+      item.style.zIndex = '0';
+    }
   }
 
   /**
@@ -165,7 +236,7 @@ export default class Carousel {
         x: e.clientX,
         y: e.clientY
       }
-    };
+    }
   }
 
   /**
@@ -178,7 +249,7 @@ export default class Carousel {
     this._touch.end = {
       x: e.clientX,
       y: e.clientY
-    };
+    }
 
     this._handleGesture();
   }
@@ -190,12 +261,8 @@ export default class Carousel {
    */
   _handleGesture() {
     const ratio = {
-      horizontal:
-        (this._touch.end.x - this._touch.start.x) /
-        parseInt(this.computedStyle.getPropertyValue('width')),
-      vertical:
-        (this._touch.end.y - this._touch.start.y) /
-        parseInt(this.computedStyle.getPropertyValue('height'))
+      horizontal: (this._touch.end.x - this._touch.start.x) / parseInt(this.computedStyle.getPropertyValue('width')),
+      vertical: (this._touch.end.y - this._touch.start.y) / parseInt(this.computedStyle.getPropertyValue('height'))
     };
 
     if (ratio.horizontal > ratio.vertical && ratio.horizontal > 0.25) {
@@ -210,45 +277,39 @@ export default class Carousel {
   /**
    * Update slides to display the wanted one
    * @method _slide
-   * @param  {String} [direction='next'] Direction in which slide needs to move
+   * @param  {String} [direction='next'] Direction in which items need to move
    * @return {void}
    */
   _slide(direction = 'next') {
-    if (this.items.length) {
-      const currentActiveItem = this.element.querySelector(
-        '.carousel-item.is-active'
-      );
-      let newActiveItem;
-
-      currentActiveItem.classList.remove('is-active');
-
+    if (this.carouselItems.length) {
+      this.emit('carousel:slide:before', this.currentItem);
+      this.currentItem.node.classList.remove('is-active');
       // initialize direction to change order
       if (direction === 'previous') {
-        // Reorder items
-        this.items.unshift(this.items.pop());
+        this.currentItem.node = this._previous(this.currentItem.node);
         // add reverse class
-        this.element.classList.add('is-reversing');
+        if (!this.carousel.classList.contains('carousel-animate-fade')) {
+          this.carousel.classList.add('is-reversing');
+          this.carouselContainer.style.transform = `translateX(${ - Math.abs(this.offset)}px)`;
+        }
       } else {
         // Reorder items
-        this.items.push(this.items.shift());
+        this.currentItem.node = this._next(this.currentItem.node);
         // re_slide reverse class
-        this.element.classList.remove('is-reversing');
+        this.carousel.classList.remove('is-reversing');
+        this.carouselContainer.style.transform = `translateX(${Math.abs(this.offset)}px)`;
       }
-
-      if (this.items.length > 1) {
-        newActiveItem = this.items[1];
-      } else {
-        newActiveItem = this.items[0];
-      }
-      newActiveItem.classList.add('is-active');
-      this._setOrder();
+      this.currentItem.node.classList.add('is-active');
 
       // Disable transition to instant change order
-      this.element.classList.toggle('carousel-animated');
+      this.carousel.classList.remove('carousel-animated');
       // Enable transition to animate order 1 to order 2
       setTimeout(() => {
-        this.element.classList.toggle('carousel-animated');
+        this.carousel.classList.add('carousel-animated');
       }, 50);
+
+      this._setOrder();
+      this.emit('carousel:slide:after', this.currentItem);
     }
   }
 
@@ -262,19 +323,5 @@ export default class Carousel {
     this._autoPlayInterval = setInterval(() => {
       this._slide('next');
     }, delay);
-  }
-
-  /**
-   * Initiate all DOM element containing carousel class
-   * @method
-   * @return {[type]} [description]
-   */
-  static attach() {
-    var carousels = document.querySelectorAll('.carousel, .hero-carousel');
-    carousels.forEach(el => {
-      setTimeout(() => {
-        new Carousel(el);
-      }, 100);
-    });
   }
 }

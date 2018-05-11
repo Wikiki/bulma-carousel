@@ -1,50 +1,35 @@
-<a name="1.1.0"></a>
-# [1.1.0](https://github.com/Wikiki/bulma-carousel/compare/1.0.12...1.1.0) (2018-04-13)
-
-
-
-<a name="1.0.12"></a>
-## [1.0.12](https://github.com/Wikiki/bulma-carousel/compare/1.0.7...1.0.12) (2018-03-29)
-
-
-
 <a name="1.0.11"></a>
-## [1.0.11](https://github.com/Wikiki/bulma-carousel/compare/1.0.7...1.0.11) (2018-03-29)
+## [1.0.11](https://github.com/Wikiki/bulma-carousel/compare/1.0.10...1.0.11) (2018-03-05)
+
+
+### Bug Fixes
+
+* **navigation:** [#17](https://github.com/Wikiki/bulma-carousel/issues/17) ([1355319](https://github.com/Wikiki/bulma-carousel/commit/1355319))
 
 
 
 <a name="1.0.10"></a>
-## [1.0.10](https://github.com/Wikiki/bulma-carousel/compare/1.0.7...1.0.10) (2018-03-29)
+## [1.0.10](https://github.com/Wikiki/bulma-carousel/compare/1.0.9...1.0.10) (2018-02-22)
 
 
 
 <a name="1.0.9"></a>
-## [1.0.9](https://github.com/Wikiki/bulma-carousel/compare/1.0.7...1.0.9) (2018-03-29)
+## [1.0.9](https://github.com/Wikiki/bulma-carousel/compare/1.0.8...1.0.9) (2018-02-22)
 
 
 
 <a name="1.0.8"></a>
-## [1.0.8](https://github.com/Wikiki/bulma-carousel/compare/1.0.7...1.0.8) (2018-03-29)
+## [1.0.8](https://github.com/Wikiki/bulma-carousel/compare/1.0.6...1.0.8) (2018-02-22)
 
 
 
 <a name="1.0.7"></a>
-## [1.0.7](https://github.com/Wikiki/bulma-carousel/compare/1.0.5...1.0.7) (2018-03-29)
-
-
-### Bug Fixes
-
-* **navigation:** [#17](https://github.com/Wikiki/bulma-carousel/issues/17) ([1355319](https://github.com/Wikiki/bulma-carousel/commit/1355319))
+## [1.0.7](https://github.com/Wikiki/bulma-carousel/compare/1.0.6...1.0.7) (2018-02-22)
 
 
 
 <a name="1.0.6"></a>
-## [1.0.6](https://github.com/Wikiki/bulma-carousel/compare/1.0.5...1.0.6) (2018-03-29)
-
-
-### Bug Fixes
-
-* **navigation:** [#17](https://github.com/Wikiki/bulma-carousel/issues/17) ([1355319](https://github.com/Wikiki/bulma-carousel/commit/1355319))
+## [1.0.6](https://github.com/Wikiki/bulma-carousel/compare/1.0.5...1.0.6) (2018-02-22)
 
 
 
