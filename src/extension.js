@@ -39,68 +39,73 @@ export default class Carousel extends EventEmitter {
    * @method init
    * @return {void}
    */
-  init() {
-    let forceHiddenNavigation = false;
+   init() {
+     let forceHiddenNavigation = false;
 
-    this.computedStyle = window.getComputedStyle(this.carousel);
+     this.computedStyle = window.getComputedStyle(this.carousel);
+ 		this.carouselWidth = parseInt(this.computedStyle.getPropertyValue('width'), 10);
 
-    this.carouselContainer = this.carousel.querySelector('.carousel-container');
-    this.carouselItems = this.carousel.querySelectorAll('.carousel-item');
-    this.carouselItemsArray = Array.from(this.carouselItems);
+     this.carouselContainer = this.carousel.querySelector('.carousel-container');
+     this.carouselItems = this.carousel.querySelectorAll('.carousel-item');
+     this.carouselItemsArray = Array.from(this.carouselItems);
 
-    // Detect which animation is setup and auto-calculate size and transformation
-    if (this.carousel.dataset.size && !this.carousel.classList.contains('carousel-animate-fade')) {
-      this.carouselWidth = parseInt(this.computedStyle.getPropertyValue('width'), 10);
+     // Detect which animation is setup and auto-calculate size and transformation
+     if (this.carousel.dataset.size && !this.carousel.classList.contains('carousel-animate-fade')) {
+       if (this.carousel.dataset.size >= this.carouselItemsArray.length) {
+         this.offset = 0;
+         forceHiddenNavigation = true;
+       } else {
+         this.offset = this.carouselWidth / this.carousel.dataset.size;
+       }
 
-      if (this.carousel.dataset.size >= this.carouselItemsArray.length) {
-        this.offset = 0;
-        forceHiddenNavigation = true;
-      } else {
-        this.offset = this.carouselWidth / this.carousel.dataset.size
-      }
+       this.carouselContainer.style.left = 0 - this.offset + 'px';
+       this.carouselContainer.style.transform = `translateX(${this.offset}px)`;
+       [].forEach.call(this.carouselItems, carouselItem => {
+         carouselItem.style.flexBasis = `${this.offset}px`;
+       });
+     }
 
-      this.carouselContainer.style.left = 0 - this.offset + 'px';
-      this.carouselContainer.style.transform = `translateX(${this.offset}px)`;
-      [].forEach.call(this.carouselItems, carouselItem => {
-        carouselItem.style.flexBasis = `${this.offset}px`;
-      });
-    }
+     this._initNavigation(forceHiddenNavigation);
 
-    this._initNavigation(forceHiddenNavigation);
+     // If animation is fade then force carouselContainer size (due to the position: absolute)
+ 		if (this.carousel.classList.contains('carousel-animate-fade') && this.carouselItems.length) {
+       let img = this.carouselItems[0].querySelector('img');
+ 			let scale = 1;
+ 			if (img.naturalWidth) {
+ 				scale = this.carouselWidth / img.naturalWidth;
+ 				this.carouselContainer.style.height = (img.naturalHeight * scale) + 'px';
+ 			} else {
+ 	      img.onload = () => {
+ 					scale = this.carouselWidth / img.naturalWidth;
+ 	        this.carouselContainer.style.height = (img.naturalHeight * scale) + 'px';
+ 	      }
+ 			}
+     }
 
-    // If animation is fade then force carouselContainer size (due to the position: absolute)
-    if (this.carousel.classList.contains('carousel-animate-fade') && this.carouselItems.length) {
-      let img = this.carouselItems[0].querySelector('img');
-      img.onload = () => {
-        this.carouselContainer.style.height = img.naturalWidth + 'px';
-      }
-    }
+     this.currentItem = {
+       carousel: this.carousel,
+       node: null,
+       pos: -1
+     };
+     this.currentItem.node = this.carousel.querySelector('.carousel-item.is-active'), this.currentItem.pos = this.currentItem.node
+       ? this.carouselItemsArray.indexOf(this.currentItem.node)
+       : -1;
+     if (!this.currentItem.node) {
+       this.currentItem.node = this.carouselItems[0];
+       this.currentItem.node.classList.add('is-active');
+       this.currentItem.pos = 0;
+     }
 
-    this.currentItem = {
-      carousel: this.carousel,
-      node: null,
-      pos: -1
-    };
-    this.currentItem.node = this.carousel.querySelector('.carousel-item.is-active'),
-    this.currentItem.pos = this.currentItem.node
-      ? this.carouselItemsArray.indexOf(this.currentItem.node)
-      : -1;
-    if (!this.currentItem.node) {
-      this.currentItem.node = this.carouselItems[0];
-      this.currentItem.node.classList.add('is-active');
-      this.currentItem.pos = 0;
-    }
+     this._setOrder();
 
-    this._setOrder();
+     if (this.carousel.dataset.autoplay && this.carousel.dataset.autoplay == 'true') {
+       this._autoPlay(this.carousel.dataset.delay || 5000);
+     }
 
-    if (this.carousel.dataset.autoplay && this.carousel.dataset.autoplay == 'true') {
-      this._autoPlay(this.carousel.dataset.delay || 5000);
-    }
+     this._bindEvents();
 
-    this._bindEvents();
-
-    this.emit('carousel:ready', this.currentItem);
-  }
+     this.emit('carousel:ready', this.currentItem);
+   }
 
   /**
    * Initiate Navigation area and Previous/Next buttons
