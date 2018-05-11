@@ -49,7 +49,7 @@ var distJsFile     = package.name + '.min.js';
  // Uses Sass compiler to process styles, adds vendor prefixes, minifies, then
  // outputs file to the appropriate location.
  gulp.task('build:styles', function() {
-   //runSequence('build:styles:copy',function() {
+   runSequence('build:styles:copy',function() {
      return gulp.src([paths.bulma + bulmaSassFile, paths.src + mainSassFile])
        .pipe(concat(globalSassFile))
        .pipe(sass({
@@ -60,7 +60,7 @@ var distJsFile     = package.name + '.min.js';
        .pipe(cleancss())
        .pipe(concat(distCssFile))
        .pipe(gulp.dest(paths.dest));
-   //});
+   });
  });
 
  // Copy original sass file to dist

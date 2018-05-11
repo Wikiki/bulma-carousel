@@ -1,3 +1,13 @@
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/Wikiki/bulma-carousel/compare/2.0.0...2.0.1) (2018-05-11)
+
+
+### Bug Fixes
+
+* Changelog ([d7917cc](https://github.com/Wikiki/bulma-carousel/commit/d7917cc))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/Wikiki/bulma-carousel/compare/1.1.0...2.0.0) (2018-05-11)
 
