@@ -1,4 +1,4 @@
-import 'EventEmitter' from 'events';
+import EventEmitter from './events';
 
 export default class Carousel extends EventEmitter {
   constructor(selector) {
@@ -50,7 +50,7 @@ export default class Carousel extends EventEmitter {
     if (this.carousel.dataset.size && !this.carousel.classList.contains('carousel-animate-fade')) {
       this.carouselWidth = parseInt(this.computedStyle.getPropertyValue('width'), 10);
 
-      if (this.carousel.dataset.size => this.carouselItemsArray.length) {
+      if (this.carousel.dataset.size >= this.carouselItemsArray.length) {
         this.offset = 0;
         this._initNavigation(true);
       } else {
