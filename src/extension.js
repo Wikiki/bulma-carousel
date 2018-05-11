@@ -40,6 +40,8 @@ export default class Carousel extends EventEmitter {
    * @return {void}
    */
   init() {
+    let forceHiddenNavigation = false;
+
     this.computedStyle = window.getComputedStyle(this.carousel);
 
     this.carouselContainer = this.carousel.querySelector('.carousel-container');
@@ -52,17 +54,19 @@ export default class Carousel extends EventEmitter {
 
       if (this.carousel.dataset.size >= this.carouselItemsArray.length) {
         this.offset = 0;
-        this._initNavigation(true);
+        forceHiddenNavigation = true;
       } else {
         this.offset = this.carouselWidth / this.carousel.dataset.size
-        this._initNavigation();
       }
+
       this.carouselContainer.style.left = 0 - this.offset + 'px';
       this.carouselContainer.style.transform = `translateX(${this.offset}px)`;
       [].forEach.call(this.carouselItems, carouselItem => {
         carouselItem.style.flexBasis = `${this.offset}px`;
       });
     }
+
+    this._initNavigation(forceHiddenNavigation);
 
     // If animation is fade then force carouselContainer size (due to the position: absolute)
     if (this.carousel.classList.contains('carousel-animate-fade') && this.carouselItems.length) {
