@@ -294,38 +294,39 @@ export default class Carousel extends EventEmitter {
    * @param  {String} [direction='next'] Direction in which items need to move
    * @return {void}
    */
-  _slide(direction = 'next') {
-    if (this.carouselItems.length) {
-      this.emit('carousel:slide:before', this.currentItem);
-      this.currentItem.node.classList.remove('is-active');
-      // initialize direction to change order
-      if (direction === 'previous') {
-        this.currentItem.node = this._previous(this.currentItem.node);
-        // add reverse class
-        if (!this.carousel.classList.contains('carousel-animate-fade')) {
-          this.carousel.classList.add('is-reversing');
-          this.carouselContainer.style.transform = `translateX(${ - Math.abs(this.offset)}px)`;
-        }
-      } else {
-        // Reorder items
-        this.currentItem.node = this._next(this.currentItem.node);
-        // re_slide reverse class
-        this.carousel.classList.remove('is-reversing');
-        this.carouselContainer.style.transform = `translateX(${Math.abs(this.offset)}px)`;
-      }
-      this.currentItem.node.classList.add('is-active');
+   _slide(direction = 'next') {
+     if (this.carouselItems.length) {
+ 			this.oldItemNode = this.currentItem.node;
+       this.emit('carousel:slide:before', this.currentItem);
+       // initialize direction to change order
+       if (direction === 'previous') {
+         this.currentItem.node = this._previous(this.currentItem.node);
+         // add reverse class
+         if (!this.carousel.classList.contains('carousel-animate-fade')) {
+           this.carousel.classList.add('is-reversing');
+           this.carouselContainer.style.transform = `translateX(${ - Math.abs(this.offset)}px)`;
+         }
+       } else {
+         // Reorder items
+         this.currentItem.node = this._next(this.currentItem.node);
+         // re_slide reverse class
+         this.carousel.classList.remove('is-reversing');
+         this.carouselContainer.style.transform = `translateX(${Math.abs(this.offset)}px)`;
+       }
+       this.currentItem.node.classList.add('is-active');
+ 			this.oldItemNode.classList.remove('is-active');
 
-      // Disable transition to instant change order
-      this.carousel.classList.remove('carousel-animated');
-      // Enable transition to animate order 1 to order 2
-      setTimeout(() => {
-        this.carousel.classList.add('carousel-animated');
-      }, 50);
+       // Disable transition to instant change order
+       this.carousel.classList.remove('carousel-animated');
+       // Enable transition to animate order 1 to order 2
+       setTimeout(() => {
+         this.carousel.classList.add('carousel-animated');
+       }, 50);
 
-      this._setOrder();
-      this.emit('carousel:slide:after', this.currentItem);
-    }
-  }
+       this._setOrder();
+       this.emit('carousel:slide:after', this.currentItem);
+     }
+   }
 
   /**
    * Initiate autoplay system
