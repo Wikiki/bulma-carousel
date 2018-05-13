@@ -173,16 +173,10 @@ export default class Carousel extends EventEmitter {
     this.carousel.addEventListener('touchstart', e => {
       this._swipeStart(e);
     });
-    this.carousel.addEventListener('mousedown', e => {
-      this._swipeStart(e);
-    });
     this.carousel.addEventListener('touchmove', e => {
       e.preventDefault();
     });
     this.carousel.addEventListener('touchend', e => {
-      this._swipeEnd(e);
-    });
-    this.carousel.addEventListener('mouseup', e => {
       this._swipeEnd(e);
     });
   }
@@ -289,7 +283,9 @@ export default class Carousel extends EventEmitter {
     const elapsedTime = new Date().getTime() - this._touch.start.time; // get time elapsed
     if (elapsedTime <= this.options.allowedTime) { // first condition for awipe met
       if (Math.abs(this._touch.dist.x) >= this.options.threshold && Math.abs(this._touch.dist.y) <= this.options.restraint) { // 2nd condition for horizontal swipe met
-        (this._touch.dist.x < 0) ? this._slide('next') : this._slide('previous'); // if dist traveled is negative, it indicates left swipe
+        (this._touch.dist.x < 0)
+          ? this._slide('next')
+          : this._slide('previous'); // if dist traveled is negative, it indicates left swipe
       }
     }
   }
@@ -300,39 +296,39 @@ export default class Carousel extends EventEmitter {
    * @param  {String} [direction='next'] Direction in which items need to move
    * @return {void}
    */
-   _slide(direction = 'next') {
-     if (this.carouselItems.length) {
- 			this.oldItemNode = this.currentItem.node;
-       this.emit('carousel:slide:before', this.currentItem);
-       // initialize direction to change order
-       if (direction === 'previous') {
-         this.currentItem.node = this._previous(this.currentItem.node);
-         // add reverse class
-         if (!this.carousel.classList.contains('carousel-animate-fade')) {
-           this.carousel.classList.add('is-reversing');
-           this.carouselContainer.style.transform = `translateX(${ - Math.abs(this.offset)}px)`;
-         }
-       } else {
-         // Reorder items
-         this.currentItem.node = this._next(this.currentItem.node);
-         // re_slide reverse class
-         this.carousel.classList.remove('is-reversing');
-         this.carouselContainer.style.transform = `translateX(${Math.abs(this.offset)}px)`;
-       }
-       this.currentItem.node.classList.add('is-active');
- 			this.oldItemNode.classList.remove('is-active');
+  _slide(direction = 'next') {
+    if (this.carouselItems.length) {
+      this.oldItemNode = this.currentItem.node;
+      this.emit('carousel:slide:before', this.currentItem);
+      // initialize direction to change order
+      if (direction === 'previous') {
+        this.currentItem.node = this._previous(this.currentItem.node);
+        // add reverse class
+        if (!this.carousel.classList.contains('carousel-animate-fade')) {
+          this.carousel.classList.add('is-reversing');
+          this.carouselContainer.style.transform = `translateX(${ - Math.abs(this.offset)}px)`;
+        }
+      } else {
+        // Reorder items
+        this.currentItem.node = this._next(this.currentItem.node);
+        // re_slide reverse class
+        this.carousel.classList.remove('is-reversing');
+        this.carouselContainer.style.transform = `translateX(${Math.abs(this.offset)}px)`;
+      }
+      this.currentItem.node.classList.add('is-active');
+      this.oldItemNode.classList.remove('is-active');
 
-       // Disable transition to instant change order
-       this.carousel.classList.remove('carousel-animated');
-       // Enable transition to animate order 1 to order 2
-       setTimeout(() => {
-         this.carousel.classList.add('carousel-animated');
-       }, 50);
+      // Disable transition to instant change order
+      this.carousel.classList.remove('carousel-animated');
+      // Enable transition to animate order 1 to order 2
+      setTimeout(() => {
+        this.carousel.classList.add('carousel-animated');
+      }, 50);
 
-       this._setOrder();
-       this.emit('carousel:slide:after', this.currentItem);
-     }
-   }
+      this._setOrder();
+      this.emit('carousel:slide:after', this.currentItem);
+    }
+  }
 
   /**
    * Initiate autoplay system
