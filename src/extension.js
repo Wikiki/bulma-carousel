@@ -173,16 +173,10 @@ export default class Carousel extends EventEmitter {
     this.carousel.addEventListener('touchstart', e => {
       this._swipeStart(e);
     });
-    this.carousel.addEventListener('mousedown', e => {
-      this._swipeStart(e);
-    });
     this.carousel.addEventListener('touchmove', e => {
       e.preventDefault();
     });
     this.carousel.addEventListener('touchend', e => {
-      this._swipeEnd(e);
-    });
-    this.carousel.addEventListener('mouseup', e => {
       this._swipeEnd(e);
     });
   }
