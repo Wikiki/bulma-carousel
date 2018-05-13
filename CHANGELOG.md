@@ -1,3 +1,13 @@
+<a name="2.0.12"></a>
+## [2.0.12](https://github.com/Wikiki/bulma-carousel/compare/2.0.9...2.0.12) (2018-05-13)
+
+
+### Bug Fixes
+
+* **fade:** Blank image ([2eb732c](https://github.com/Wikiki/bulma-carousel/commit/2eb732c))
+
+
+
 <a name="2.0.11"></a>
 ## [2.0.11](https://github.com/Wikiki/bulma-carousel/compare/2.0.9...2.0.11) (2018-05-13)
 
