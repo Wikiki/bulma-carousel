@@ -144,6 +144,13 @@ class Carousel extends EventEmitter {
       throw new Error('An invalid selector or non-DOM node has been provided.');
     }
 
+    /// Set default options and merge with instance defined
+    this.options = Object.assign({}, {
+      threshold: 150, //required min distance traveled to be considered swipe
+      restraint: 100, // maximum distance allowed at the same time in perpendicular direction
+      allowedTime: 300 // maximum time allowed to travel that distance
+    });
+
     this.init();
   }
 
@@ -298,7 +305,9 @@ class Carousel extends EventEmitter {
     this.carousel.addEventListener('mousedown', e => {
       this._swipeStart(e);
     });
-
+    this.carousel.addEventListener('touchmove', e => {
+      e.preventDefault();
+    });
     this.carousel.addEventListener('touchend', e => {
       this._swipeEnd(e);
     });
@@ -366,14 +375,16 @@ class Carousel extends EventEmitter {
    * @return {void}
    */
   _swipeStart(e) {
+    e.preventDefault();
     this._touch = {
       start: {
-        x: e.clientX,
-        y: e.clientY
+        time: new Date().getTime(), // record time when finger first makes contact with surface
+        x: touchObj.pageX,
+        y: touchObj.pageY
       },
-      end: {
-        x: e.clientX,
-        y: e.clientY
+      dist: {
+        x: 0,
+        y: 0
       }
     };
   }
@@ -385,9 +396,11 @@ class Carousel extends EventEmitter {
    * @return {void}
    */
   _swipeEnd(e) {
-    this._touch.end = {
-      x: e.clientX,
-      y: e.clientY
+    e.preventDefault();
+    const touchObj = e.changedTouches[0];
+    this._touch.dist = {
+      x: touchObj.pageX - this._touch.start.x, // get horizontal dist traveled by finger while in contact with surface
+      y: touchObj.pageY - this._touch.start.y // get vertical dist traveled by finger while in contact with surface
     };
 
     this._handleGesture();
@@ -399,17 +412,11 @@ class Carousel extends EventEmitter {
    * @return {void}
    */
   _handleGesture() {
-    const ratio = {
-      horizontal: (this._touch.end.x - this._touch.start.x) / parseInt(this.computedStyle.getPropertyValue('width')),
-      vertical: (this._touch.end.y - this._touch.start.y) / parseInt(this.computedStyle.getPropertyValue('height'))
-    };
-
-    if (ratio.horizontal > ratio.vertical && ratio.horizontal > 0.25) {
-      this._slide('previous');
-    }
-
-    if (ratio.horizontal < ratio.vertical && ratio.horizontal < -0.25) {
-      this._slide('next');
+    elapsedTime = new Date().getTime() - this._touch.start.time; // get time elapsed
+    if (elapsedTime <= this.options.allowedTime) { // first condition for awipe met
+      if (Math.abs(this._touch.dist.x) >= this.options.threshold && Math.abs(this._touch.dist.y) <= this.options.restraint) { // 2nd condition for horizontal swipe met
+        (this._touch.dist.x < 0) ? this._slide('next') : this._slide('previous'); // if dist traveled is negative, it indicates left swipe
+      }
     }
   }
 
