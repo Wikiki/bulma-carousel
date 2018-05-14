@@ -130,6 +130,17 @@ class EventEmitter {
   }
 }
 
+var supportsPassive = false;
+try {
+  var opts = Object.defineProperty({}, 'passive', {
+    get: function() {
+      supportsPassive = true;
+    }
+  });
+  window.addEventListener("testPassive", null, opts);
+  window.removeEventListener("testPassive", null, opts);
+} catch (e) {}
+
 class Carousel extends EventEmitter {
   constructor(selector) {
     super();
@@ -281,7 +292,7 @@ class Carousel extends EventEmitter {
             clearInterval(this._autoPlayInterval);
             this._autoPlay(this.carousel.dataset.delay || 5000);
           }
-        });
+        }, supportsPassive ? { passive: true } : false);
       });
     }
 
@@ -294,20 +305,22 @@ class Carousel extends EventEmitter {
             clearInterval(this._autoPlayInterval);
             this._autoPlay(this.carousel.dataset.delay || 5000);
           }
-        });
+        }, supportsPassive ? { passive: true } : false);
       });
     }
 
     // Bind swipe events
     this.carousel.addEventListener('touchstart', e => {
       this._swipeStart(e);
-    });
+    }, supportsPassive ? { passive: true } : false);
     this.carousel.addEventListener('touchmove', e => {
-      e.preventDefault();
-    });
+      if (!supportsPassive) {
+        e.preventDefault();
+      }
+    }, supportsPassive ? { passive: true } : false);
     this.carousel.addEventListener('touchend', e => {
       this._swipeEnd(e);
-    });
+    }, supportsPassive ? { passive: true } : false);
   }
 
   /**
@@ -371,11 +384,13 @@ class Carousel extends EventEmitter {
   _swipeStart(e) {
     e.preventDefault();
 
+    e = e ? e : window.event;
+    e = ('changedTouches' in e) ? e.changedTouches[0] : e;
     this._touch = {
       start: {
         time: new Date().getTime(), // record time when finger first makes contact with surface
-        x: touchObj.pageX,
-        y: touchObj.pageY
+        x: e.pageX,
+        y: e.pageY
       },
       dist: {
         x: 0,
@@ -393,10 +408,11 @@ class Carousel extends EventEmitter {
   _swipeEnd(e) {
     e.preventDefault();
 
-    const touchObj = e.changedTouches[0];
+    e = e ? e : window.event;
+    e = ('changedTouches' in e) ? e.changedTouches[0] : e;
     this._touch.dist = {
-      x: touchObj.pageX - this._touch.start.x, // get horizontal dist traveled by finger while in contact with surface
-      y: touchObj.pageY - this._touch.start.y // get vertical dist traveled by finger while in contact with surface
+      x: e.pageX - this._touch.start.x, // get horizontal dist traveled by finger while in contact with surface
+      y: e.pageY - this._touch.start.y // get vertical dist traveled by finger while in contact with surface
     };
 
     this._handleGesture();
