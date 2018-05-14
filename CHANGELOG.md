@@ -1,3 +1,13 @@
+<a name="2.0.13"></a>
+## [2.0.13](https://github.com/Wikiki/bulma-carousel/compare/2.0.12...2.0.13) (2018-05-14)
+
+
+### Bug Fixes
+
+* **swipe:** Mouse enable swipe ([51ed4f9](https://github.com/Wikiki/bulma-carousel/commit/51ed4f9)), closes [#37](https://github.com/Wikiki/bulma-carousel/issues/37)
+
+
+
 <a name="2.0.12"></a>
 ## [2.0.12](https://github.com/Wikiki/bulma-carousel/compare/2.0.9...2.0.12) (2018-05-13)
 
