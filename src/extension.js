@@ -157,7 +157,9 @@ export default class Carousel extends EventEmitter {
     if (this.previousControl) {
       this._clickEvents.forEach(clickEvent => {
         this.previousControl.addEventListener(clickEvent, e => {
-          e.preventDefault();
+          if (!supportsPassive) {
+            e.preventDefault();
+          }
           this._slide('previous');
           if (this._autoPlayInterval) {
             clearInterval(this._autoPlayInterval);
@@ -170,7 +172,9 @@ export default class Carousel extends EventEmitter {
     if (this.nextControl) {
       this._clickEvents.forEach(clickEvent => {
         this.nextControl.addEventListener(clickEvent, e => {
-          e.preventDefault();
+          if (!supportsPassive) {
+            e.preventDefault();
+          }
           this._slide('next');
           if (this._autoPlayInterval) {
             clearInterval(this._autoPlayInterval);
@@ -253,7 +257,9 @@ export default class Carousel extends EventEmitter {
    * @return {void}
    */
   _swipeStart(e) {
-    e.preventDefault();
+    if (!supportsPassive) {
+      e.preventDefault();
+    }
 
     e = e ? e : window.event;
     e = ('changedTouches' in e) ? e.changedTouches[0] : e;
@@ -277,7 +283,9 @@ export default class Carousel extends EventEmitter {
    * @return {void}
    */
   _swipeEnd(e) {
-    e.preventDefault();
+    if (!supportsPassive) {
+      e.preventDefault();
+    }
 
     e = e ? e : window.event;
     e = ('changedTouches' in e) ? e.changedTouches[0] : e;
