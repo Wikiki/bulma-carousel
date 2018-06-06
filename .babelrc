@@ -1,0 +1,10 @@
+{
+  "sourceMaps": false,
+  "exclude": "node_modules/**",
+  "presets": [["env", {"modules": false}]],
+  "env": {
+    "test": {
+      "presets": [["env"]]
+    }
+  }
+}

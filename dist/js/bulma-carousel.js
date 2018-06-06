@@ -130,6 +130,25 @@ class EventEmitter {
   }
 }
 
+const defaultOptions = {
+  size: 1,
+  autoplay: false,
+  delay: 5000,
+  threshold: 50, //required min distance traveled to be considered swipe
+  restraint: 100, // maximum distance allowed at the same time in perpendicular direction
+  allowedTime: 500 // maximum time allowed to travel that distance
+};
+
+const BULMA_CAROUSEL_EVENTS = {
+  'ready': 'carousel:ready',
+  'slideBefore': 'carousel:slide:before',
+  'slideAfter': 'carousel:slide:after'
+};
+
+const onSwipeStart = Symbol('onSwipeStart');
+const onSwipeMove = Symbol('onSwipeMove');
+const onSwipeEnd = Symbol('onSwipeEnd');
+
 var supportsPassive = false;
 try {
   var opts = Object.defineProperty({}, 'passive', {
@@ -141,26 +160,38 @@ try {
   window.removeEventListener("testPassive", null, opts);
 } catch (e) {}
 
-class Carousel extends EventEmitter {
-  constructor(selector) {
+class bulmaCarousel extends EventEmitter {
+  constructor(selector, options = {}) {
     super();
 
-    this._clickEvents = ['touchstart', 'click'];
-
-    this.carousel = typeof selector === 'string'
+    this.element = typeof selector === 'string'
       ? document.querySelector(selector)
       : selector;
     // An invalid selector or non-DOM node has been provided.
-    if (!this.carousel) {
+    if (!this.element) {
       throw new Error('An invalid selector or non-DOM node has been provided.');
     }
 
-    /// Set default options and merge with instance defined
-    this.options = Object.assign({}, {
-      threshold: 50, //required min distance traveled to be considered swipe
-      restraint: 100, // maximum distance allowed at the same time in perpendicular direction
-      allowedTime: 500 // maximum time allowed to travel that distance
-    });
+    this._clickEvents = ['click'];
+    this.options = Object.assign({}, defaultOptions, options);
+    if (this.element.dataset.autoplay) {
+      this.options.autoplay =  this.element.dataset.autoplay;
+    }
+    if (this.element.dataset.delay) {
+      this.options.delay =  this.element.dataset.delay;
+    }
+    if (this.element.dataset.size && !this.element.classList.contains('carousel-animate-fade')) {
+      this.options.size = this.element.dataset.size;
+    }
+    if (this.element.classList.contains('carousel-animate-fade')) {
+      this.options.size = 1;
+    }
+
+    this.forceHiddenNavigation = false;
+
+    this[onSwipeStart] = this[onSwipeStart].bind(this);
+    this[onSwipeMove] = this[onSwipeMove].bind(this);
+    this[onSwipeEnd] = this[onSwipeEnd].bind(this);
 
     this.init();
   }
@@ -170,16 +201,16 @@ class Carousel extends EventEmitter {
    * @method
    * @return {Array} Array of all Carousel instances
    */
-  static attach(selector = '.carousel, .hero-carousel') {
-    let carouselInstances = new Array();
+  static attach(selector = '.carousel, .hero-carousel', options = {}) {
+    let instances = new Array();
 
-    const carousels = document.querySelectorAll(selector);
-    [].forEach.call(carousels, carousel => {
+    const elements = document.querySelectorAll(selector);
+    [].forEach.call(elements, element => {
       setTimeout(() => {
-        carouselInstances.push(new Carousel(carousel));
+        instances.push(new bulmaCarousel(element, options));
       }, 100);
     });
-    return carouselInstances;
+    return instances;
   }
 
   /**
@@ -188,91 +219,69 @@ class Carousel extends EventEmitter {
    * @return {void}
    */
   init() {
-    let forceHiddenNavigation = false;
-
-    this.computedStyle = window.getComputedStyle(this.carousel);
-    this.carouselWidth = parseInt(this.computedStyle.getPropertyValue('width'), 10);
-
-    this.carouselContainer = this.carousel.querySelector('.carousel-container');
-    this.carouselItems = this.carousel.querySelectorAll('.carousel-item');
-    this.carouselItemsArray = Array.from(this.carouselItems);
-
-    // Detect which animation is setup and auto-calculate size and transformation
-    if (this.carousel.dataset.size && !this.carousel.classList.contains('carousel-animate-fade')) {
-      if (this.carousel.dataset.size >= this.carouselItemsArray.length) {
-        this.offset = 0;
-        forceHiddenNavigation = true;
-      } else {
-        this.offset = this.carouselWidth / this.carousel.dataset.size;
-      }
-
-      this.carouselContainer.style.left = 0 - this.offset + 'px';
-      this.carouselContainer.style.transform = `translateX(${this.offset}px)`;
-      [].forEach.call(this.carouselItems, carouselItem => {
-        carouselItem.style.flexBasis = `${this.offset}px`;
-      });
-    }
-
-    this._initNavigation(forceHiddenNavigation);
-
-    // If animation is fade then force carouselContainer size (due to the position: absolute)
-    if (this.carousel.classList.contains('carousel-animate-fade') && this.carouselItems.length) {
-      let img = this.carouselItems[0].querySelector('img');
-      let scale = 1;
-      if (img.naturalWidth) {
-        scale = this.carouselWidth / img.naturalWidth;
-        this.carouselContainer.style.height = (img.naturalHeight * scale) + 'px';
-      } else {
-        img.onload = () => {
-          scale = this.carouselWidth / img.naturalWidth;
-          this.carouselContainer.style.height = (img.naturalHeight * scale) + 'px';
-        };
-      }
-    }
-
+    this.container = this.element.querySelector('.carousel-container');
+    this.items = this.element.querySelectorAll('.carousel-item');
     this.currentItem = {
-      carousel: this.carousel,
-      node: null,
+      element: this.element,
+      node: this.element.querySelector('.carousel-item.is-active'),
       pos: -1
     };
-    this.currentItem.node = this.carousel.querySelector('.carousel-item.is-active'), this.currentItem.pos = this.currentItem.node
-      ? this.carouselItemsArray.indexOf(this.currentItem.node)
-      : -1;
+    this.currentItem.pos = this.currentItem.node ? Array.from(this.items).indexOf(this.currentItem.node) : -1;
     if (!this.currentItem.node) {
-      this.currentItem.node = this.carouselItems[0];
+      this.currentItem.node = this.items[0];
       this.currentItem.node.classList.add('is-active');
       this.currentItem.pos = 0;
     }
+    this.forceHiddenNavigation = this.items.length <= 1;
 
+    let images = this.element.querySelectorAll('img');
+    [].forEach.call(images, img => {
+      img.setAttribute('draggable', false);
+    });
+
+    this._resize();
     this._setOrder();
-
-    if (this.carousel.dataset.autoplay && this.carousel.dataset.autoplay == 'true') {
-      this._autoPlay(this.carousel.dataset.delay || 5000);
-    }
-
+    this._initNavigation();
     this._bindEvents();
 
-    this.emit('carousel:ready', this.currentItem);
+    if (this.options.autoplay) {
+      this._autoPlay(this.options.delay);
+    }
+
+    this.emit(BULMA_CAROUSEL_EVENTS.ready, this.currentItem);
   }
 
-  /**
-   * Initiate Navigation area and Previous/Next buttons
-   * @method _initNavigation
-   * @return {[type]}        [description]
-   */
-  _initNavigation(forceHidden = false) {
-    this.previousControl = this.carousel.querySelector('.carousel-nav-left');
-    this.nextControl = this.carousel.querySelector('.carousel-nav-right');
+  _resize() {
+    const computedStyle = window.getComputedStyle(this.element);
+    const width = parseInt(computedStyle.getPropertyValue('width'), 10);
 
-    if (this.carouselItems.length <= 1 || forceHidden) {
-      if (this.carouselContainer) {
-        this.carouselContainer.style.left = '0';
+    // Detect which animation is setup and auto-calculate size and transformation
+    if (this.options.size > 1) {
+      if (this.options.size >= Array.from(this.items).length) {
+        this.offset = 0;
+      } else {
+        this.offset = width / this.options.size;
       }
-      if (this.previousControl) {
-        this.previousControl.style.display = 'none';
-      }
-      if (this.nextControl) {
-        this.nextControl.style.display = 'none';
+
+      this.container.style.left = 0 - this.offset + 'px';
+      this.container.style.transform = `translateX(${this.offset}px)`;
+      [].forEach.call(this.items, item => {
+        item.style.flexBasis = `${this.offset}px`;
+      });
+    }
+
+    // If animation is fade then force carouselContainer size (due to the position: absolute)
+    if (this.element.classList.contains('carousel-animate-fade') && this.items.length) {
+      let img = this.items[0].querySelector('img');
+      let scale = 1;
+      if (img.naturalWidth) {
+        scale = width / img.naturalWidth;
+        this.container.style.height = (img.naturalHeight * scale) + 'px';
+      } else {
+        img.onload = () => {
+          scale = width / img.naturalWidth;
+          this.container.style.height = (img.naturalHeight * scale) + 'px';
+        };
       }
     }
   }
@@ -289,11 +298,11 @@ class Carousel extends EventEmitter {
           if (!supportsPassive) {
             e.preventDefault();
           }
-          this._slide('previous');
           if (this._autoPlayInterval) {
             clearInterval(this._autoPlayInterval);
-            this._autoPlay(this.carousel.dataset.delay || 5000);
+            this._autoPlay(this.optionsdelay);
           }
+          this._slide('previous');
         }, supportsPassive ? { passive: true } : false);
       });
     }
@@ -304,88 +313,40 @@ class Carousel extends EventEmitter {
           if (!supportsPassive) {
             e.preventDefault();
           }
-          this._slide('next');
           if (this._autoPlayInterval) {
             clearInterval(this._autoPlayInterval);
-            this._autoPlay(this.carousel.dataset.delay || 5000);
+            this._autoPlay(this.options.delay);
           }
+          this._slide('next');
         }, supportsPassive ? { passive: true } : false);
       });
     }
 
     // Bind swipe events
-    this.carousel.addEventListener('touchstart', e => {
-      this._swipeStart(e);
-    }, supportsPassive ? { passive: true } : false);
-    this.carousel.addEventListener('touchmove', e => {
-      if (!supportsPassive) {
-        e.preventDefault();
-      }
-    }, supportsPassive ? { passive: true } : false);
-    this.carousel.addEventListener('touchend', e => {
-      this._swipeEnd(e);
-    }, supportsPassive ? { passive: true } : false);
+    this.element.addEventListener('touchstart', this[onSwipeStart], supportsPassive ? { passive: true } : false);
+    this.element.addEventListener('mousedown', this[onSwipeStart], supportsPassive ? { passive: true } : false);
+    this.element.addEventListener('touchmove', this[onSwipeMove], supportsPassive ? { passive: true } : false);
+    this.element.addEventListener('mousemove', this[onSwipeMove], supportsPassive ? { passive: true } : false);
+    this.element.addEventListener('touchend', this[onSwipeEnd], supportsPassive ? { passive: true } : false);
+    this.element.addEventListener('mouseup', this[onSwipeEnd], supportsPassive ? { passive: true } : false);
   }
 
-  /**
-   * Find next item to display
-   * @method _next
-   * @param  {Node} element Current Node element
-   * @return {Node}         Next Node element
-   */
-  _next(element) {
-    if (element.nextElementSibling) {
-      return element.nextElementSibling;
-    } else {
-      return this.carouselItems[0];
-    }
-  }
-
-  /**
-   * Find previous item to display
-   * @method _previous
-   * @param  {Node}  element Current Node element
-   * @return {Node}          Previous Node element
-   */
-  _previous(element) {
-    if (element.previousElementSibling) {
-      return element.previousElementSibling;
-    } else {
-      return this.carouselItems[this.carouselItems.length - 1];
-    }
-  }
-
-  /**
-   * Update each item order
-   * @method _setOrder
-   */
-  _setOrder() {
-    this.currentItem.node.style.order = '1';
-    this.currentItem.node.style.zIndex = '1';
-    let item = this.currentItem.node;
-    let i,
-      j,
-      ref;
-    for (
-      i = j = 2, ref = this.carouselItemsArray.length; (
-        2 <= ref
-        ? j <= ref
-        : j >= ref); i = 2 <= ref
-      ? ++j
-      : --j) {
-      item = this._next(item);
-      item.style.order = '' + i % this.carouselItemsArray.length;
-      item.style.zIndex = '0';
-    }
+  destroy() {
+    this.element.removeEventListener('touchstart', this[onSwipeStart], supportsPassive ? { passive: true } : false);
+    this.element.removeEventListener('mousedown', this[onSwipeStart], supportsPassive ? { passive: true } : false);
+    this.element.removeEventListener('touchmove', this[onSwipeMove], supportsPassive ? { passive: true } : false);
+    this.element.removeEventListener('mousemove', this[onSwipeMove], supportsPassive ? { passive: true } : false);
+    this.element.removeEventListener('touchend', this[onSwipeEnd], supportsPassive ? { passive: true } : false);
+    this.element.removeEventListener('mouseup', this[onSwipeEnd], supportsPassive ? { passive: true } : false);
   }
 
   /**
    * Save current position on start swiping
-   * @method _swipeStart
+   * @method onSwipeStart
    * @param  {Event}    e Swipe event
    * @return {void}
    */
-  _swipeStart(e) {
+  [onSwipeStart](e) {
     if (!supportsPassive) {
       e.preventDefault();
     }
@@ -407,11 +368,23 @@ class Carousel extends EventEmitter {
 
   /**
    * Save current position on end swiping
-   * @method _swipeEnd
+   * @method onSwipeMove
    * @param  {Event}  e swipe event
    * @return {void}
    */
-  _swipeEnd(e) {
+  [onSwipeMove](e) {
+    if (!supportsPassive) {
+      e.preventDefault();
+    }
+  }
+
+  /**
+   * Save current position on end swiping
+   * @method onSwipeEnd
+   * @param  {Event}  e swipe event
+   * @return {void}
+   */
+  [onSwipeEnd](e) {
     if (!supportsPassive) {
       e.preventDefault();
     }
@@ -443,42 +416,116 @@ class Carousel extends EventEmitter {
   }
 
   /**
+   * Initiate Navigation area and Previous/Next buttons
+   * @method _initNavigation
+   * @return {[type]}        [description]
+   */
+  _initNavigation() {
+    this.previousControl = this.element.querySelector('.carousel-nav-left');
+    this.nextControl = this.element.querySelector('.carousel-nav-right');
+
+    if (this.items.length <= 1 || this.forceHiddenNavigation) {
+      if (this.container) {
+        this.container.style.left = '0';
+      }
+      if (this.previousControl) {
+        this.previousControl.style.display = 'none';
+      }
+      if (this.nextControl) {
+        this.nextControl.style.display = 'none';
+      }
+    }
+  }
+
+  /**
+   * Update each item order
+   * @method _setOrder
+   */
+  _setOrder() {
+    this.currentItem.node.style.order = '1';
+    this.currentItem.node.style.zIndex = '1';
+    let item = this.currentItem.node;
+    let i,
+      j,
+      ref;
+    for (
+      i = j = 2, ref = Array.from(this.items).length; (
+        2 <= ref
+        ? j <= ref
+        : j >= ref); i = 2 <= ref
+      ? ++j
+      : --j) {
+      item = this._next(item);
+      item.style.order = '' + i % Array.from(this.items).length;
+      item.style.zIndex = '0';
+    }
+  }
+
+  /**
+   * Find next item to display
+   * @method _next
+   * @param  {Node} element Current Node element
+   * @return {Node}         Next Node element
+   */
+  _next(element) {
+    if (element.nextElementSibling) {
+      return element.nextElementSibling;
+    } else {
+      return this.items[0];
+    }
+  }
+
+  /**
+   * Find previous item to display
+   * @method _previous
+   * @param  {Node}  element Current Node element
+   * @return {Node}          Previous Node element
+   */
+  _previous(element) {
+    if (element.previousElementSibling) {
+      return element.previousElementSibling;
+    } else {
+      return this.items[this.items.length - 1];
+    }
+  }
+
+  /**
    * Update slides to display the wanted one
    * @method _slide
    * @param  {String} [direction='next'] Direction in which items need to move
    * @return {void}
    */
   _slide(direction = 'next') {
-    if (this.carouselItems.length) {
+    if (this.items.length) {
       this.oldItemNode = this.currentItem.node;
-      this.emit('carousel:slide:before', this.currentItem);
+      this.emit(BULMA_CAROUSEL_EVENTS.slideBefore, this.currentItem);
       // initialize direction to change order
       if (direction === 'previous') {
         this.currentItem.node = this._previous(this.currentItem.node);
         // add reverse class
-        if (!this.carousel.classList.contains('carousel-animate-fade')) {
-          this.carousel.classList.add('is-reversing');
-          this.carouselContainer.style.transform = `translateX(${ - Math.abs(this.offset)}px)`;
+        if (!this.element.classList.contains('carousel-animate-fade')) {
+          this.element.classList.add('is-reversing');
+          this.container.style.transform = `translateX(${ - Math.abs(this.offset)}px)`;
         }
       } else {
         // Reorder items
         this.currentItem.node = this._next(this.currentItem.node);
         // re_slide reverse class
-        this.carousel.classList.remove('is-reversing');
-        this.carouselContainer.style.transform = `translateX(${Math.abs(this.offset)}px)`;
+        this.element.classList.remove('is-reversing');
+        this.container.style.transform = `translateX(${Math.abs(this.offset)}px)`;
       }
       this.currentItem.node.classList.add('is-active');
       this.oldItemNode.classList.remove('is-active');
 
       // Disable transition to instant change order
-      this.carousel.classList.remove('carousel-animated');
+      this.element.classList.remove('carousel-animated');
       // Enable transition to animate order 1 to order 2
       setTimeout(() => {
-        this.carousel.classList.add('carousel-animated');
+        this.element.classList.add('carousel-animated');
       }, 50);
 
       this._setOrder();
-      this.emit('carousel:slide:after', this.currentItem);
+      this.emit(BULMA_CAROUSEL_EVENTS.slideAfter, this.currentItem);
     }
   }
 
@@ -495,6 +542,6 @@ class Carousel extends EventEmitter {
   }
 }
 
-return Carousel;
+return bulmaCarousel;
 
 })));
