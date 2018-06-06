@@ -1,20 +1,24 @@
 {
   "name": "bulma-carousel",
-  "version": "2.0.14",
   "description": "Display a Image / Content carousel",
-  "main": "dist/bulma-carousel.sass",
+  "main": "dsit/js/bulma-carousel.min.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "commit": "git-cz",
+    "precommit": "npm test",
+    "watch:test": "jest test/index.test.js -w",
+    "test": "jest test/index.test.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Wikiki/bulma-carousel.git"
+    "url": "git+https://wikiki@github.com/Wikiki/bulma-carousel.git"
   },
   "keywords": [
-    "Bulma",
-    "extensions",
+    "creativebulma",
+    "bulma.io",
     "bulma",
-    "bulma.io"
+    "extension",
+    "carousel",
+    "slideshow"
   ],
   "author": "Wikiki <wikiki@protonmail.com> (https://wikiki.github.io/bulma-extensions/overview)",
   "license": "MIT",
@@ -22,39 +26,41 @@
     "url": "https://github.com/Wikiki/bulma-carousel/issues"
   },
   "homepage": "https://github.com/Wikiki/bulma-carousel#readme",
-  "scripts": {
-    "build": "gulp"
-  },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.39",
-    "@babel/preset-env": "^7.0.0-beta.39",
-    "babel-core": "^7.0.0-beta.3",
-    "bulma": "latest",
-    "camelcase": "^4.1.0",
-    "conventional-github-releaser": "^2.0.0",
+    "babel-core": "^6.26.3",
+    "babel-jest": "^23.0.1",
+    "babel-preset-env": "^1.7.0",
+    "bulma": "^0.7.1",
+    "camelcase": "^5.0.0",
+    "commitizen": "^2.10.1",
+    "cz-conventional-changelog": "^2.1.0",
     "del": "^3.0.0",
     "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^4.1.0",
+    "gulp-autoprefixer": "^5.0.0",
     "gulp-babel": "^7.0.1",
-    "gulp-babel-minify": "^0.3.0",
-    "gulp-better-rollup": "^3.0.0",
-    "gulp-bump": "^3.1.0",
-    "gulp-clean-css": "^3.9.2",
+    "gulp-babel-minify": "^0.4.3",
+    "gulp-better-rollup": "^3.1.0",
+    "gulp-clean-css": "^3.9.4",
     "gulp-concat": "^2.6.1",
-    "gulp-conventional-changelog": "^1.1.11",
-    "gulp-git": "^2.5.1",
     "gulp-postcss": "^7.0.1",
-    "gulp-sass": "latest",
+    "gulp-sass": "^4.0.1",
     "gulp-uglify": "^3.0.0",
     "gulp-util": "^3.0.8",
-    "rollup-plugin-babel": "^3.0.3",
-    "run-sequence": "^2.2.1"
+    "husky": "^0.14.3",
+    "jest": "^23.1.0",
+    "regenerator-runtime": "^0.11.1",
+    "rollup-plugin-babel": "^3.0.4",
+    "run-sequence": "^2.2.1",
+    "semantic-release": "^15.5.0"
+  },
+  "czConfig": {
+    "path": "node_modules/cz-conventional-changelog"
   },
   "files": [
-    "dist/bulma-carousel.sass",
-    "dist/bulma-carousel.min.css",
-    "dist/bulma-carousel.js",
-    "dist/bulma-carousel.min.js",
+    "dist/css/bulma-carousel.sass",
+    "dist/css/bulma-carousel.min.css",
+    "dist/js/bulma-carousel.js",
+    "dist/js/bulma-carousel.min.js",
     "LICENSE",
     "README.md"
   ]
