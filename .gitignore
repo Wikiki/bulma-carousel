@@ -1,3 +1,2 @@
-/bulma
 /node_modules
-/dist/bulma-carousel.sass~HEAD
+.DS_Store
