@@ -7,9 +7,10 @@ const webpackStream       = require('webpack-stream');
 const autoprefixer        = require('autoprefixer');
 const camelCase           = require('camelcase');
 const cleancss            = require('gulp-clean-css');
+const colors              = require('ansi-colors');
 const concat              = require('gulp-concat');
 const del                 = require('del');
-const gutil               = require('gulp-util');
+const log                 = require('fancy-log');
 const postcss             = require('gulp-postcss');
 const sass                = require('gulp-sass');
 const uglify              = require('gulp-uglify');
@@ -119,11 +120,11 @@ gulp.task('build:scripts', function() {
     .pipe(gulp.dest(config.javascript.destination))
     .pipe(concat(config.javascript.output.filename + '.min.js'))
     .pipe(uglify().on('error', function(err) {
-      gutil.log(gutil.colors.red('[Error]'), err.toString())
+      log(colors.red('[Error]'), err.toString())
     }))
     .pipe(gulp.dest(config.javascript.destination)
       .on('error', function(err) {
-        gutil.log(gutil.colors.red('[Error]'), err.toString())
+        log(colors.red('[Error]'), err.toString())
       })
     );
 });

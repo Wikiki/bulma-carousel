@@ -1,9 +1,6 @@
 {
   "sourceMaps": false,
   "ignore": "node_modules/**",
-<<<<<<< HEAD
-  "presets": [["env", {"modules": false}]],
-=======
   "presets": [
     ["env", {
       "modules": false,
@@ -12,17 +9,12 @@
       }
     }]
   ],
->>>>>>> 8c811ff... build(gulpfile): Switch from rollup to webpack for Javascript compilation
   "env": {
     "test": {
       "presets": [["env"]]
     }
-<<<<<<< HEAD
-  }
-=======
   },
   "plugins": [
     "transform-object-rest-spread"
   ]
->>>>>>> 8c811ff... build(gulpfile): Switch from rollup to webpack for Javascript compilation
 }
