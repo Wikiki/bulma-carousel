@@ -2,10 +2,7 @@
   "name": "bulma-carousel",
   "description": "Display a Image / Content carousel",
   "main": "dsit/js/bulma-carousel.min.js",
-<<<<<<< HEAD
-=======
   "version": "2.1.15",
->>>>>>> 8c811ff... build(gulpfile): Switch from rollup to webpack for Javascript compilation
   "scripts": {
     "commit": "git-cz",
     "precommit": "npm test",
@@ -31,37 +28,7 @@
   },
   "homepage": "https://github.com/Wikiki/bulma-carousel#readme",
   "devDependencies": {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    "babel-core": "^6.26.3",
-    "babel-jest": "^23.0.1",
-    "babel-preset-env": "^1.7.0",
-    "bulma": "^0.7.1",
-    "camelcase": "^5.0.0",
-    "commitizen": "^2.10.1",
-    "cz-conventional-changelog": "^2.1.0",
-    "del": "^3.0.0",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^5.0.0",
-    "gulp-babel": "^7.0.1",
-    "gulp-babel-minify": "^0.4.3",
-    "gulp-better-rollup": "^3.1.0",
-    "gulp-clean-css": "^3.9.4",
-    "gulp-concat": "^2.6.1",
-    "gulp-postcss": "^7.0.1",
-    "gulp-sass": "^4.0.1",
-    "gulp-uglify": "^3.0.0",
-    "gulp-util": "^3.0.8",
-    "husky": "^0.14.3",
-    "jest": "^23.1.0",
-    "regenerator-runtime": "^0.11.1",
-    "rollup-plugin-babel": "^3.0.4",
-    "run-sequence": "^2.2.1",
-    "semantic-release": "^15.5.0"
-=======
-=======
     "ansi-colors": "^2.0.1",
->>>>>>> 0930978... build(gulpfile): Fix use of gulp v4.0.0
     "babel-core": "latest",
     "babel-jest": "latest",
     "babel-loader": "latest",
@@ -84,18 +51,10 @@
     "jest": "latest",
     "regenerator-runtime": "latest",
     "rollup": "latest",
-<<<<<<< HEAD
-    "semantic-release": "^15.5.1",
-    "webpack": "^4.12.0",
-    "webpack-stream": "^4.0.3",
-    "travis-deploy-once": "^5.0.0"
->>>>>>> 8c811ff... build(gulpfile): Switch from rollup to webpack for Javascript compilation
-=======
     "semantic-release": "latest",
     "travis-deploy-once": "latest",
     "webpack": "latest",
     "webpack-stream": "latest"
->>>>>>> 0930978... build(gulpfile): Fix use of gulp v4.0.0
   },
   "czConfig": {
     "path": "node_modules/cz-conventional-changelog"
