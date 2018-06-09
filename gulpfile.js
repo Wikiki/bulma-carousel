@@ -1,18 +1,19 @@
-var package       = require('./package.json')
-var gulp          = require('gulp');
 
-var autoprefixer  = require('autoprefixer');
-var babel         = require('gulp-babel');
-var camelCase     = require('camelcase');
-var cleancss      = require('gulp-clean-css');
-var concat        = require('gulp-concat');
-var del           = require('del');
-var gutil         = require('gulp-util');
-var minify        = require('gulp-babel-minify');
-var postcss       = require('gulp-postcss');
-var rollup        = require('gulp-better-rollup');
-var runSequence   = require('run-sequence');
-var sass          = require('gulp-sass');
+const pkg                 = require('./package.json');
+const gulp                = require('gulp');
+const webpack             = require('webpack');
+const webpackStream       = require('webpack-stream');
+
+const autoprefixer        = require('autoprefixer');
+const camelCase           = require('camelcase');
+const cleancss            = require('gulp-clean-css');
+const colors              = require('ansi-colors');
+const concat              = require('gulp-concat');
+const del                 = require('del');
+const log                 = require('fancy-log');
+const postcss             = require('gulp-postcss');
+const sass                = require('gulp-sass');
+const uglify              = require('gulp-uglify');
 
 /**
  * ----------------------------------------
@@ -29,7 +30,7 @@ const config = {
     input: 'index.sass',
     dependencies: ['node_modules/bulma/sass/utilities/_all.sass'],
     output: {
-      filename: package.name,
+      filename: pkg.name,
       format: 'compressed'
     },
     source: paths.src + 'sass/',
@@ -38,8 +39,8 @@ const config = {
   javascript: {
     input: 'index.js',
     output: {
-      name: camelCase(package.name),
-      filename: package.name,
+      name: camelCase(pkg.name),
+      filename: pkg.name,
       format: 'umd'
     },
     source: paths.src + 'js/',
@@ -65,7 +66,7 @@ gulp.task('build:styles', function() {
       includePaths: ['node_modules/bulma/sass/utilities/']
     }))
     .pipe(concat(config.sass.output.filename + (config.sass.output.format === 'compressed' ? '.min' : '') + '.css'))
-    .pipe(postcss([autoprefixer({browsers: package.broswers})]))
+    .pipe(postcss([autoprefixer({browsers: pkg.broswers})]))
     .pipe(cleancss())
     .pipe(gulp.dest(config.sass.destination));
 });
@@ -78,10 +79,10 @@ gulp.task('build:styles:copy', function() {
 });
 
 gulp.task('clean:styles', function() {
- del([
-   config.sass.destination + config.sass.output.filename + '.sass',
-   config.sass.destination + config.sass.output.filename + (config.sass.output.format === 'compressed' ? '.min' : '') + '.css'
- ]);
+  return del([
+    config.sass.destination + config.sass.output.filename + '.sass',
+    config.sass.destination + config.sass.output.filename + (config.sass.output.format === 'compressed' ? '.min' : '') + '.css'
+  ]);
 });
 
 /**
@@ -89,50 +90,52 @@ gulp.task('clean:styles', function() {
  *  BUILD JAVASCRIPT TASKS
  * ----------------------------------------
  */
- // Concatenates and uglifies global JS files and outputs result to the
- // appropriate location.
+
+// Concatenates and uglifies global JS files and outputs result to the
+// appropriate location.
 gulp.task('build:scripts', function() {
   return gulp
     .src(config.javascript.source + config.javascript.input)
-    .pipe(rollup({
-      plugins: [babel({ babelrc: true })]
-    }, {
-      format: config.javascript.output.format,
-      name: config.javascript.output.name
-    }).on('error', function(err) {
-      gutil.log(gutil.colors.red('[Error]'), err.toString())
-    }))
+    .pipe(webpackStream({
+      output: {
+        filename: config.javascript.output.filename + '.js',
+        library: config.javascript.output.name,
+        libraryTarget: config.javascript.output.format,
+        libraryExport: 'default'
+      },
+      module: {
+        rules: [
+          {
+            test: /\.(js|jsx)$/,
+            exclude: /(node_modules)/,
+            loader: 'babel-loader',
+            options: {
+              babelrc: './babelrc'
+            }
+          },
+        ],
+      }
+    }), webpack)
     .pipe(concat(config.javascript.output.filename + '.js'))
     .pipe(gulp.dest(config.javascript.destination))
     .pipe(concat(config.javascript.output.filename + '.min.js'))
-    .pipe(minify().on('error', function(err) {
-      gutil.log(gutil.colors.red('[Error]'), err.toString())
+    .pipe(uglify().on('error', function(err) {
+      log(colors.red('[Error]'), err.toString())
     }))
     .pipe(gulp.dest(config.javascript.destination)
-    .on('error', function(err) {
-      gutil.log(gutil.colors.red('[Error]'), err.toString())
-    }));
+      .on('error', function(err) {
+        log(colors.red('[Error]'), err.toString())
+      })
+    );
 });
 
 gulp.task('clean:scripts', function() {
-  del([
-    config.javascript.destination + mainJsFile,
-    config.javascript.destination + distJsFile
+  return del([
+    config.javascript.destination + config.javascript.output.filename + '.js',
+    config.javascript.destination + config.javascript.output.filename + '.min.js'
   ]);
 });
 
-/**
- * ----------------------------------------
- *  GLOBAL BUILD
- * ----------------------------------------
- */
-gulp.task('build', function(callback) {
-  runSequence('clean',
-    ['build:styles'],
-    ['build:styles:copy'],
-    ['build:scripts'],
-    callback);
-});
 
 /**
  * ----------------------------------------
@@ -141,12 +144,23 @@ gulp.task('build', function(callback) {
  */
 // Deletes the entire dist directory.
 gulp.task('clean', function() {
-  del(paths.dist);
+  return del(paths.dist);
 });
+
+/**
+ * ----------------------------------------
+ *  GLOBAL BUILD
+ * ----------------------------------------
+ */
+gulp.task('build', gulp.series('clean', 'build:styles', 'build:styles:copy', 'build:scripts', function(callback) {
+  callback();
+}));
 
 /**
  * ----------------------------------------
  *  DEFAULT TASK
  * ----------------------------------------
  */
-gulp.task('default', ['build']);
+gulp.task('default', gulp.series('build', function(done) {
+  done();
+}));
