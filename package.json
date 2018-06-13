@@ -3,7 +3,7 @@
   "description": "Display a Image / Content carousel",
   "main": "./dist/js/bulma-carousel.min.js",
   "style": "./dist/css/bulma-carousel.min.css",
-  "version": "0.0.0-development",
+  "version": "2.2.0",
   "scripts": {
     "commit": "git-cz",
     "precommit": "npm test",
