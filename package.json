@@ -66,10 +66,8 @@
     }
   },
   "files": [
-    "dist/css/bulma-carousel.sass",
-    "dist/css/bulma-carousel.min.css",
-    "dist/js/bulma-carousel.js",
-    "dist/js/bulma-carousel.min.js",
+    "dist/**",
+    "src/**",
     "LICENSE",
     "README.md"
   ]
