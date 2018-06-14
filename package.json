@@ -3,12 +3,13 @@
   "description": "Display a Image / Content carousel",
   "main": "./dist/js/bulma-carousel.min.js",
   "style": "./dist/css/bulma-carousel.min.css",
-  "version": "2.2.0",
   "scripts": {
     "commit": "git-cz",
     "precommit": "npm test",
     "travis-deploy-once": "travis-deploy-once",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "watch:test": "jest test/index.test.js -w",
+    "test": "jest test/index.test.js"
   },
   "repository": {
     "type": "git",
@@ -49,7 +50,6 @@
     "gulp-postcss": "^7.0.1",
     "gulp-sass": "^4.0.1",
     "gulp-uglify": "^3.0.0",
-    "husky": "^0.14.3",
     "jest": "^23.1.0",
     "regenerator-runtime": "^0.11.1",
     "semantic-release": "^15.5.2",
