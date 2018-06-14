@@ -35,7 +35,11 @@ export default class bulmaCarousel extends EventEmitter {
     }
 
     this._clickEvents = ['click'];
-    this.options = Object.assign({}, defaultOptions, options);
+    /// Set default options and merge with instance defined
+    this.options = {
+      ...defaultOptions,
+      ...options
+    };
     if (this.element.dataset.autoplay) {
       this.options.autoplay =  this.element.dataset.autoplay;
     }
