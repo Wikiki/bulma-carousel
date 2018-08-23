@@ -52,6 +52,9 @@ export default class bulmaCarousel extends EventEmitter {
     if (this.element.classList.contains('carousel-animate-fade')) {
       this.options.size = 1;
     }
+    if (this.element.dataset.stopautoplayoninteraction) {
+      this.options.stopautoplayoninteraction = this.element.dataset.stopautoplayoninteraction;
+    }
 
     this.forceHiddenNavigation = false;
 
@@ -166,7 +169,9 @@ export default class bulmaCarousel extends EventEmitter {
           }
           if (this._autoPlayInterval) {
             clearInterval(this._autoPlayInterval);
-            this._autoPlay(this.optionsdelay);
+            if (!this.options.stopautoplayoninteraction) {
+              this._autoPlay(this.options.delay);
+            }
           }
           this._slide('previous');
         }, supportsPassive ? { passive: true } : false);
@@ -181,7 +186,9 @@ export default class bulmaCarousel extends EventEmitter {
           }
           if (this._autoPlayInterval) {
             clearInterval(this._autoPlayInterval);
-            this._autoPlay(this.options.delay);
+            if (!this.options.stopautoplayoninteraction) {
+              this._autoPlay(this.options.delay);
+            }
           }
           this._slide('next');
         }, supportsPassive ? { passive: true } : false);
@@ -365,6 +372,9 @@ export default class bulmaCarousel extends EventEmitter {
     if (this.items.length) {
       this.oldItemNode = this.currentItem.node;
       this.emit(BULMA_CAROUSEL_EVENTS.slideBefore, this.currentItem);
+      if(this.options.stopautoplayoninteraction) {
+        clearInterval(this._autoPlayInterval);
+      }
       // initialize direction to change order
       if (direction === 'previous') {
         this.currentItem.node = this._previous(this.currentItem.node);
