@@ -99,6 +99,7 @@ export default class bulmaCarousel extends EventEmitter {
     if (!this.currentItem.node) {
       this.currentItem.node = this.items[0];
       this.currentItem.node.classList.add('is-active');
+      this.currentItem.node.style.opacity = 1;
       this.currentItem.pos = 0;
     }
     this.forceHiddenNavigation = this.items.length <= 1;
@@ -298,7 +299,7 @@ export default class bulmaCarousel extends EventEmitter {
     this.nextControl = this.element.querySelector('.carousel-nav-right');
 
     if (this.items.length <= 1 || this.forceHiddenNavigation) {
-      if (this.container) {
+      if (this.container && !this.element.classList.contains('carousel-animate-fade')) {
         this.container.style.left = '0';
       }
       if (this.previousControl) {
