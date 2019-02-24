@@ -1,106 +1,103 @@
-$carousel-nav-background: rgba($white, 0.7) !default
-$carousel-nav-color: $text !default
-$carousel-title-background: rgba($white, 0.6) !default
-$carousel-title-size: $size-7 !default
-$carousel-border: none
-$carousel-animation-speed: .5s
-$carousel-animation-method: ease-in-out
+.slider
+	position: relative
+	width: 100%
+	// overflow: hidden
+.slider-container
+	display: flex
+	flex-wrap: nowrap
+	flex-direction: row
+	overflow: hidden
+	transform: translate3d(0, 0, 0)
+	min-height: 100%
+	&.is-vertical
+		flex-direction: column
+	.slider-item
+		flex: none
+		.image
+			&.is-covered
+				img
+					object-fit: cover
+					object-position: center center
+					height: 100%
+					width: 100%
+		// Responsive embedded objects
+		.video-container
+			height: 0
+			padding-top: 56.25% // ratio 16:9
+			position: relative
+			&.is-1by1,
+			&.is-square
+				padding-top: 100%
+			&.is-4by3
+				padding-top: 75%
+			&.is-21by9
+				padding-top: 42.857143%
+			& iframe,
+			& object,
+			& embed
+				position: absolute
+				top: 0
+				left: 0
+				width: 100% !important
+				height: 100% !important
 
-=carousel-item
-  display: block
-  position: relative
-  flex: 1 0 100%
-  &.has-background
-    .is-background
-      object-fit: cover
-      object-position: center center
-      height: 100%
-      width: 100%
-  .title
-    position: absolute
-    left: 0
-    right: 0
-    bottom: 0
-    padding: 1.5em
-    margin: 0
-    text-align: center
-    background: $carousel-title-background
-    font-size: $carousel-title-size
 
-=carousel-container
-  width: 100%
-  position: relative
-  border: $carousel-border
-  display: flex
-  margin: 0
-  padding: 0
-  left: -100%
-  transform: translateX(100%)
-  @content
+.slider-navigation-previous,
+.slider-navigation-next
+	position: absolute
+	width: 42px
+	height: 42px
+	background: white url('../images/left.svg') center center no-repeat
+	background-size: 20px 20px
+	border: 1px solid white
+	border-radius: 25091983px
+	box-shadow: 0 2px 5px #3232321a
+	top: 50%
+	margin-top: -20px
+	left: 0px
+	cursor: pointer
+	transition: transform .3s, opacity .3s
+	&:hover
+		transform: scale(1.2)
+	&.is-hidden
+		display: none
+		opacity: 0
+.slider-navigation-next
+	left: auto
+	right: 0px
+	background: white url('../images/right.svg') center center no-repeat
+	background-size: 20px 20px
 
-=carousel
-  position: relative
-  overflow: hidden
-  .carousel-container
-    +carousel-container
-      .carousel-item
-        +carousel-item
-  .carousel-navigation
-    +carousel-navigation
-  &.is-reversing
-    .carousel-container
-      transform: translateX(-100%)
+.slider-pagination
+	display: none
+	justify-content: center
+	align-items: center
+	position: absolute
+	bottom: 0
+	left: 0
+	right: 0
+	padding: .5rem 1rem
+	text-align: center
+	.slider-page
+		background: white
+		width: 10px
+		height: 10px
+		border-radius: 25091983px
+		display: inline-block
+		margin: 0 3px
+		box-shadow: 0 2px 5px #3232321a
+		transition: transform .3s
+		cursor: pointer
+		&.is-active,
+		&:hover
+			transform: scale(1.4)
 
-// Carousel Navigation (includes previous - next actions elements)
-=carousel-navigation
-  display: flex
-  justify-content: space-around
-  width: 100%
-  pointer-events: none
-  .carousel-nav-left,
-  .carousel-nav-right
-    padding: 1em
-    pointer-events: auto
-  &.is-centered
-    justify-content: center
-  &.is-overlay
-    top: 50%
-    transform: perspective(1px) translateY(-50%)
-    bottom: auto
-    left: auto
-    right: auto
-    align-items: center
-    justify-content: space-between
-    z-index: 99
-    .carousel-nav-left,
-    .carousel-nav-right
-      height: 2.2em
-      width: 2em
-      background: $carousel-nav-background
-      display: flex
-      justify-content: center
-      align-items: center
-      color: $carousel-nav-color
-      position: absolute
-      left: 0
-      &:hover
-        cursor: pointer
-    .carousel-nav-right
-      left: auto
-      right: 0
+	@media screen and (min-width: 800px)
+		display: flex
 
-// Sizes
-.carousel
-  +carousel
-  &[data-size]
-    &:not(.carousel-animate-fade)
-      .carousel-container
-        .carousel-item
-          padding: 1em
 
 // Hero Carousel
 =hero-carousel
-  display: flex
   position: absolute
   top: 0
   left: 0
@@ -113,35 +110,29 @@ $carousel-animation-method: ease-in-out
   z-index: 0
 
 .hero
-  &.has-carousel
-    position: relative
-    + .hero-body,
-    + .hero-head,
-    + .hero-footer
-      z-index: 1
-    .hero-carousel
-      +hero-carousel
-      .carousel-container
-        height: auto !important
-
-.hero-carousel
-  +carousel
-
-// Animation
-.carousel,
-.hero-carousel
-  &.carousel-animate-slide
-    &.carousel-animated
-      .carousel-container
-        transform: none !important
-        transition: transform $carousel-animation-speed $carousel-animation-method
-  &.carousel-animate-fade
-    .carousel-item
-      position: absolute
-      width: 100%
-      height: 100%
-      transition: opacity $carousel-animation-speed $carousel-animation-method
-      &.is-active
-        opacity: 1
-      &:not(.is-active)
-        opacity: 0
+	&.has-carousel
+		position: relative
+		+ .hero-body,
+		+ .hero-head,
+		+ .hero-footer
+			z-index: 10
+			overflow: hidden
+		.hero-carousel
+			+hero-carousel
+			.slider
+				width: 100%
+				max-width: 100%
+				overflow: hidden
+				height: 100% !important
+				max-height: 100%
+				z-index: 0
+				.has-background
+					max-height: 100%
+					.is-background
+						object-fit: cover
+						object-position: center center
+						height: 100%
+						width: 100%
+		.hero-body
+			margin: 0 3rem
+			z-index: 10

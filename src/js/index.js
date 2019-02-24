@@ -1,159 +1,147 @@
-import EventEmitter from './events';
+import {
+  uuid
+} from './utils/index';
+import {
+  removeClasses,
+  height,
+  width,
+  outerHeight
+} from './utils/css';
+import {
+  isString
+} from './utils/type';
+import EventEmitter from './utils/eventEmitter';
+
+import Autoplay from './components/autoplay';
+import Breakpoint from './components/breakpoint';
+import Infinite from './components/infinite';
+import Loop from './components/loop';
+import Navigation from './components/navigation';
+import Pagination from './components/pagination';
+import Swipe from './components/swipe';
+import Transitioner from './components/transitioner';
+
 import defaultOptions from './defaultOptions';
-
-const BULMA_CAROUSEL_EVENTS = {
-  'ready': 'carousel:ready',
-  'slideBefore': 'carousel:slide:before',
-  'slideAfter': 'carousel:slide:after'
-};
-
-const onSwipeStart = Symbol('onSwipeStart');
-const onSwipeMove = Symbol('onSwipeMove');
-const onSwipeEnd = Symbol('onSwipeEnd');
-
-var supportsPassive = false;
-try {
-  var opts = Object.defineProperty({}, 'passive', {
-    get: function() {
-      supportsPassive = true;
-    }
-  });
-  window.addEventListener("testPassive", null, opts);
-  window.removeEventListener("testPassive", null, opts);
-} catch (e) {}
+import template from './templates';
+import templateItem from './templates/item';
 
 export default class bulmaCarousel extends EventEmitter {
   constructor(selector, options = {}) {
     super();
 
-    this.element = typeof selector === 'string'
-      ? document.querySelector(selector)
-      : selector;
+    this.element = isString(selector) ? document.querySelector(selector) : selector;
     // An invalid selector or non-DOM node has been provided.
     if (!this.element) {
       throw new Error('An invalid selector or non-DOM node has been provided.');
     }
+    this._clickEvents = ['click', 'touch'];
 
-    this._clickEvents = ['click'];
-    /// Set default options and merge with instance defined
+    // Use Element dataset values to override options
+    const elementConfig = this.element.dataset ? Object.keys(this.element.dataset)
+      .filter(key => Object.keys(defaultOptions).includes(key))
+      .reduce((obj, key) => {
+        return {
+          ...obj,
+          [key]: this.element.dataset[key]
+        };
+      }, {}) : {};
+    // Set default options - dataset attributes are master
     this.options = {
       ...defaultOptions,
-      ...options
+      ...options,
+      ...elementConfig
     };
-    if (this.element.dataset.autoplay) {
-      this.options.autoplay =  this.element.dataset.autoplay;
-    }
-    if (this.element.dataset.delay) {
-      this.options.delay =  this.element.dataset.delay;
-    }
-    if (this.element.dataset.size && !this.element.classList.contains('carousel-animate-fade')) {
-      this.options.size = this.element.dataset.size;
-    }
-    if (this.element.classList.contains('carousel-animate-fade')) {
-      this.options.size = 1;
-    }
-    if (this.element.dataset.stopautoplayoninteraction) {
-      this.options.stopautoplayoninteraction = this.element.dataset.stopautoplayoninteraction;
-    }
 
-    this.forceHiddenNavigation = false;
+    this._id = uuid('slider');
 
-    this[onSwipeStart] = this[onSwipeStart].bind(this);
-    this[onSwipeMove] = this[onSwipeMove].bind(this);
-    this[onSwipeEnd] = this[onSwipeEnd].bind(this);
+    this.onShow = this.onShow.bind(this);
 
-    this.init();
+    // Initiate plugin
+    this._init();
   }
 
   /**
-   * Initiate all DOM element containing carousel class
+   * Initiate all DOM element containing datePicker class
    * @method
-   * @return {Array} Array of all Carousel instances
+   * @return {Array} Array of all datePicker instances
    */
-  static attach(selector = '.carousel, .hero-carousel', options = {}) {
+  static attach(selector = '.slider', options = {}) {
     let instances = new Array();
 
-    const elements = document.querySelectorAll(selector);
+    const elements = isString(selector) ? document.querySelectorAll(selector) : Array.isArray(selector) ? selector : [selector];
     [].forEach.call(elements, element => {
-      setTimeout(() => {
-        instances.push(new bulmaCarousel(element, options));
-      }, 100);
+      if (typeof element[this.constructor.name] === 'undefined') {
+        const instance = new bulmaCarousel(element, options);
+        element[this.constructor.name] = instance;
+        instances.push(instance);
+      } else {
+        instances.push(element[this.constructor.name]);
+      }
     });
+
     return instances;
   }
 
+  /****************************************************
+   *                                                  *
+   * PRIVATE FUNCTIONS                                *
+   *                                                  *
+   ****************************************************/
   /**
-   * Initiate plugin
-   * @method init
-   * @return {void}
+   * Initiate plugin instance
+   * @method _init
+   * @return {Slider} Current plugin instance
    */
-  init() {
-    this.container = this.element.querySelector('.carousel-container');
-    this.items = this.element.querySelectorAll('.carousel-item');
-    this.currentItem = {
-      element: this.element,
-      node: this.element.querySelector('.carousel-item.is-active'),
-      pos: -1
-    };
-    this.currentItem.pos = this.currentItem.node ? Array.from(this.items).indexOf(this.currentItem.node) : -1;
-    if (!this.currentItem.node) {
-      this.currentItem.node = this.items[0];
-      this.currentItem.node.classList.add('is-active');
-      this.currentItem.node.style.opacity = 1;
-      this.currentItem.pos = 0;
-    }
-    this.forceHiddenNavigation = this.items.length <= 1;
+  _init() {
+    this._items = Array.from(this.element.children);
 
-    let images = this.element.querySelectorAll('img');
-    [].forEach.call(images, img => {
-      img.setAttribute('draggable', false);
-    });
+    // Load plugins
+    this._breakpoint = new Breakpoint(this);
+    this._autoplay = new Autoplay(this);
+    this._navigation = new Navigation(this);
+    this._pagination = new Pagination(this);
+    this._infinite = new Infinite(this);
+    this._loop = new Loop(this);
+    this._swipe = new Swipe(this);
 
-    this._resize();
-    this._setOrder();
-    this._initNavigation();
-    this._bindEvents();
+    this._build();
 
-    if (this.options.autoplay) {
-      this._autoPlay(this.options.delay);
-    }
+    this.emit('ready', this);
 
-    this.emit(BULMA_CAROUSEL_EVENTS.ready, this.currentItem);
+    return this;
   }
 
-  _resize() {
-    const computedStyle = window.getComputedStyle(this.element);
-    const width = parseInt(computedStyle.getPropertyValue('width'), 10);
-
-    // Detect which animation is setup and auto-calculate size and transformation
-    if (this.options.size > 1) {
-      if (this.options.size >= Array.from(this.items).length) {
-        this.offset = 0;
-      } else {
-        this.offset = width / this.options.size;
-      }
-
-      this.container.style.left = 0 - this.offset + 'px';
-      this.container.style.transform = `translateX(${this.offset}px)`;
-      [].forEach.call(this.items, item => {
-        item.style.flexBasis = `${this.offset}px`;
-      });
+  /**
+   * Build Slider HTML component and append it to the DOM
+   * @method _build
+   */
+  _build() {
+    // Generate HTML Fragment of template
+    this.node = document.createRange().createContextualFragment(template(this.id));
+    // Save pointers to template parts
+    this._ui = {
+      wrapper: this.node.firstChild,
+      container: this.node.querySelector('.slider-container')
     }
 
-    // If animation is fade then force carouselContainer size (due to the position: absolute)
-    if (this.element.classList.contains('carousel-animate-fade') && this.items.length) {
-      let img = this.items[0].querySelector('img');
-      let scale = 1;
-      if (img.naturalWidth) {
-        scale = width / img.naturalWidth;
-        this.container.style.height = (img.naturalHeight * scale) + 'px';
-      } else {
-        img.onload = () => {
-          scale = width / img.naturalWidth;
-          this.container.style.height = (img.naturalHeight * scale) + 'px';
-        }
-      }
-    }
+    // Add slider to DOM
+    this.element.appendChild(this.node);
+    this._ui.wrapper.classList.add('is-loading');
+    this._ui.container.style.opacity = 0;
+
+    this._transitioner = new Transitioner(this);
+
+    // Wrap all items by slide element
+    this._slides = this._items.map((item, index) => {
+      return this._createSlide(item, index);
+    });
+
+    this.reset();
+
+    this._bindEvents();
+
+    this._ui.container.style.opacity = 1;
+    this._ui.wrapper.classList.remove('is-loading');
   }
 
   /**
@@ -162,259 +150,275 @@ export default class bulmaCarousel extends EventEmitter {
    * @return {void}
    */
   _bindEvents() {
-    if (this.previousControl) {
-      this._clickEvents.forEach(clickEvent => {
-        this.previousControl.addEventListener(clickEvent, e => {
-          if (!supportsPassive) {
-            e.preventDefault();
-          }
-          if (this._autoPlayInterval) {
-            clearInterval(this._autoPlayInterval);
-            if (!this.options.stopautoplayoninteraction) {
-              this._autoPlay(this.options.delay);
-            }
-          }
-          this._slide('previous');
-        }, supportsPassive ? { passive: true } : false);
-      });
-    }
-
-    if (this.nextControl) {
-      this._clickEvents.forEach(clickEvent => {
-        this.nextControl.addEventListener(clickEvent, e => {
-          if (!supportsPassive) {
-            e.preventDefault();
-          }
-          if (this._autoPlayInterval) {
-            clearInterval(this._autoPlayInterval);
-            if (!this.options.stopautoplayoninteraction) {
-              this._autoPlay(this.options.delay);
-            }
-          }
-          this._slide('next');
-        }, supportsPassive ? { passive: true } : false);
-      });
-    }
-
-    // Bind swipe events
-    this.element.addEventListener('touchstart', this[onSwipeStart], supportsPassive ? { passive: true } : false);
-    this.element.addEventListener('mousedown', this[onSwipeStart], supportsPassive ? { passive: true } : false);
-    this.element.addEventListener('touchmove', this[onSwipeMove], supportsPassive ? { passive: true } : false);
-    this.element.addEventListener('mousemove', this[onSwipeMove], supportsPassive ? { passive: true } : false);
-    this.element.addEventListener('touchend', this[onSwipeEnd], supportsPassive ? { passive: true } : false);
-    this.element.addEventListener('mouseup', this[onSwipeEnd], supportsPassive ? { passive: true } : false);
+    this.on('show', this.onShow);
   }
 
-  destroy() {
-    this.element.removeEventListener('touchstart', this[onSwipeStart], supportsPassive ? { passive: true } : false);
-    this.element.removeEventListener('mousedown', this[onSwipeStart], supportsPassive ? { passive: true } : false);
-    this.element.removeEventListener('touchmove', this[onSwipeMove], supportsPassive ? { passive: true } : false);
-    this.element.removeEventListener('mousemove', this[onSwipeMove], supportsPassive ? { passive: true } : false);
-    this.element.removeEventListener('touchend', this[onSwipeEnd], supportsPassive ? { passive: true } : false);
-    this.element.removeEventListener('mouseup', this[onSwipeEnd], supportsPassive ? { passive: true } : false);
+  _unbindEvents() {
+    this.off('show', this.onShow);
+  }
+
+  _createSlide(item, index) {
+    const slide = document.createRange().createContextualFragment(templateItem()).firstChild;
+    slide.dataset.sliderIndex = index;
+    slide.appendChild(item);
+    return slide;
   }
 
   /**
-   * Save current position on start swiping
-   * @method onSwipeStart
-   * @param  {Event}    e Swipe event
-   * @return {void}
+   * Calculate slider dimensions
    */
-  [onSwipeStart](e) {
-    if (!supportsPassive) {
-      e.preventDefault();
-    }
-
-    e = e ? e : window.event;
-    e = ('changedTouches' in e) ? e.changedTouches[0] : e;
-    this._touch = {
-      start: {
-        time: new Date().getTime(), // record time when finger first makes contact with surface
-        x: e.pageX,
-        y: e.pageY
-      },
-      dist: {
-        x: 0,
-        y: 0
+  _setDimensions() {
+    if (!this.options.vertical) {
+      if (this.options.centerMode) {
+        this._ui.wrapper.style.padding = '0px ' + this.options.centerPadding;
+      }
+    } else {
+      this._ui.wrapper.style.height = outerHeight(this._slides[0]) * this.slidesToShow;
+      if (this.options.centerMode) {
+        this._ui.wrapper.style.padding = this.options.centerPadding + ' 0px';
       }
     }
+
+    this._wrapperWidth = width(this._ui.wrapper);
+    this._wrapperHeight = outerHeight(this._ui.wrapper);
+
+    if (!this.options.vertical) {
+      this._slideWidth = Math.ceil(this._wrapperWidth / this.slidesToShow);
+      this._containerWidth = Math.ceil(this._slideWidth * this._slides.length);
+      this._ui.container.style.width = this._containerWidth + 'px';
+    } else {
+      this._slideWidth = Math.ceil(this._wrapperWidth);
+      this._containerHeight = Math.ceil((outerHeight(this._slides[0]) * this._slides.length));
+      this._ui.container.style.height = this._containerHeight + 'px';
+    }
+
+    this._slides.forEach(slide => {
+      slide.style.width = this._slideWidth + 'px';
+    });
   }
 
-  /**
-   * Save current position on end swiping
-   * @method onSwipeMove
-   * @param  {Event}  e swipe event
-   * @return {void}
-   */
-  [onSwipeMove](e) {
-    if (!supportsPassive) {
-      e.preventDefault();
+  _setHeight() {
+    if (this.options.effect !== 'translate') {
+      this._ui.container.style.height = outerHeight(this._slides[this.state.index]) + 'px';
     }
   }
 
+  // Update slides classes
+  _setClasses() {
+    this._slides.forEach(slide => {
+      removeClasses(slide, 'is-active is-current is-slide-previous is-slide-next');
+      if (Math.abs((this.state.index - 1) % this.state.length) === parseInt(slide.dataset.sliderIndex, 10)) {
+        slide.classList.add('is-slide-previous');
+      }
+      if (Math.abs(this.state.index % this.state.length) === parseInt(slide.dataset.sliderIndex, 10)) {
+        slide.classList.add('is-current');
+      }
+      if (Math.abs((this.state.index + 1) % this.state.length) === parseInt(slide.dataset.sliderIndex, 10)) {
+        slide.classList.add('is-slide-next');
+      }
+    });
+  }
+
+  /****************************************************
+   *                                                  *
+   * GETTERS and SETTERS                              *
+   *                                                  *
+   ****************************************************/
+
   /**
-   * Save current position on end swiping
-   * @method onSwipeEnd
-   * @param  {Event}  e swipe event
-   * @return {void}
+   * Get id of current datePicker
    */
-  [onSwipeEnd](e) {
-    if (!supportsPassive) {
-      e.preventDefault();
+  get id() {
+    return this._id;
+  }
+
+  set index(index) {
+    this._index = index;
+  }
+
+  get index() {
+    return this._index;
+  }
+
+  set length(length) {
+    this._length = length;
+  }
+
+  get length() {
+    return this._length;
+  }
+
+  get slides() {
+    return this._slides;
+  }
+
+  set slides(slides) {
+    this._slides = slides;
+  }
+
+  get slidesToScroll() {
+    return this.options.effect === 'translate' ? this._breakpoint.getSlidesToScroll() : 1;
+  }
+
+  get slidesToShow() {
+    return this.options.effect === 'translate' ? this._breakpoint.getSlidesToShow() : 1;
+  }
+
+  get direction() {
+    return (this.element.dir.toLowerCase() === 'rtl' || this.element.style.direction === 'rtl') ? 'rtl' : 'ltr';
+  }
+
+  get wrapper() {
+    return this._ui.wrapper;
+  }
+
+  get wrapperWidth() {
+    return this._wrapperWidth || 0;
+  }
+
+  get container() {
+    return this._ui.container;
+  }
+
+  get containerWidth() {
+    return this._containerWidth || 0;
+  }
+
+  get slideWidth() {
+    return this._slideWidth || 0;
+  }
+
+  get transitioner() {
+    return this._transitioner;
+  }
+
+  /****************************************************
+   *                                                  *
+   * EVENTS FUNCTIONS                                 *
+   *                                                  *
+   ****************************************************/
+  onShow(e) {
+    this._navigation.refresh();
+    this._pagination.refresh();
+    this._setClasses();
+  }
+
+  /****************************************************
+   *                                                  *
+   * PUBLIC FUNCTIONS                                 *
+   *                                                  *
+   ****************************************************/
+  next() {
+    if (!this.options.loop && !this.options.infinite && this.state.index + this.slidesToScroll > this.state.length - this.slidesToShow && !this.options.centerMode) {
+      this.state.next = this.state.index;
+    } else {
+      this.state.next = this.state.index + this.slidesToScroll;
+    }
+    this.show();
+  }
+
+  previous() {
+    if (!this.options.loop && !this.options.infinite && this.state.index === 0) {
+      this.state.next = this.state.index;
+    } else {
+      this.state.next = this.state.index - this.slidesToScroll;
+    }
+    this.show();
+  }
+
+  start() {
+    this._autoplay.start();
+  }
+
+  pause() {
+    this._autoplay.pause();
+  }
+
+  stop() {
+    this._autoplay.stop();
+  }
+
+  show(index, force = false) {
+    // If all slides are already visible then return
+    if (!this.state.length || this.state.length <= this.slidesToShow) {
+      return;
     }
 
-    e = e ? e : window.event;
-    e = ('changedTouches' in e) ? e.changedTouches[0] : e;
-    this._touch.dist = {
-      x: e.pageX - this._touch.start.x, // get horizontal dist traveled by finger while in contact with surface
-      y: e.pageY - this._touch.start.y // get vertical dist traveled by finger while in contact with surface
+    if (typeof index === 'Number') {
+      this.state.next = index;
+    }
+
+    if (this.options.loop) {
+      this._loop.apply();
+    }
+    if (this.options.infinite) {
+      this._infinite.apply();
+    }
+
+    // If new slide is already the current one then return
+    if (this.state.index === this.state.next) {
+      return;
+    }
+
+    this.emit('before:show', this.state);
+    this._transitioner.apply(force, this._setHeight.bind(this));
+    this.emit('after:show', this.state);
+
+    this.emit('show', this);
+  }
+
+  reset() {
+    this.state = {
+      length: this._items.length,
+      index: Math.abs(this.options.initialSlide),
+      next: Math.abs(this.options.initialSlide),
+      prev: undefined
     };
 
-    this._handleGesture();
-  }
-
-  /**
-   * Identify the gestureand slide if necessary
-   * @method _handleGesture
-   * @return {void}
-   */
-  _handleGesture() {
-    const elapsedTime = new Date().getTime() - this._touch.start.time; // get time elapsed
-    if (elapsedTime <= this.options.allowedTime) { // first condition for awipe met
-      if (Math.abs(this._touch.dist.x) >= this.options.threshold && Math.abs(this._touch.dist.y) <= this.options.restraint) { // 2nd condition for horizontal swipe met
-        (this._touch.dist.x < 0)
-          ? this._slide('next')
-          : this._slide('previous'); // if dist traveled is negative, it indicates left swipe
-      }
+    // Fix options
+    if (this.options.loop && this.options.infinite) {
+      this.options.loop = false;
     }
-  }
-
-  /**
-   * Initiate Navigation area and Previous/Next buttons
-   * @method _initNavigation
-   * @return {[type]}        [description]
-   */
-  _initNavigation() {
-    this.previousControl = this.element.querySelector('.carousel-nav-left');
-    this.nextControl = this.element.querySelector('.carousel-nav-right');
-
-    if (this.items.length <= 1 || this.forceHiddenNavigation) {
-      if (this.container && !this.element.classList.contains('carousel-animate-fade')) {
-        this.container.style.left = '0';
-      }
-      if (this.previousControl) {
-        this.previousControl.style.display = 'none';
-      }
-      if (this.nextControl) {
-        this.nextControl.style.display = 'none';
-      }
+    if (this.options.slidesToScroll > this.options.slidesToShow) {
+      this.options.slidesToScroll = this.slidesToShow;
     }
-  }
+    this._breakpoint.init();
 
-  /**
-   * Update each item order
-   * @method _setOrder
-   */
-  _setOrder() {
-    this.currentItem.node.style.order = '1';
-    this.currentItem.node.style.zIndex = '1';
-    let item = this.currentItem.node;
-    let i,
-      j,
-      ref;
-    for (
-      i = j = 2, ref = Array.from(this.items).length; (
-        2 <= ref
-        ? j <= ref
-        : j >= ref); i = 2 <= ref
-      ? ++j
-      : --j) {
-      item = this._next(item);
-      item.style.order = '' + i % Array.from(this.items).length;
-      item.style.zIndex = '0';
+    if (this.state.index >= this.state.length && this.state.index !== 0) {
+      this.state.index = this.state.index - this.slidesToScroll;
     }
-  }
+    if (this.state.length <= this.slidesToShow) {
+      this.state.index = 0;
+    }
 
-  /**
-   * Find next item to display
-   * @method _next
-   * @param  {Node} element Current Node element
-   * @return {Node}         Next Node element
-   */
-  _next(element) {
-    if (element.nextElementSibling) {
-      return element.nextElementSibling;
+    this._ui.wrapper.appendChild(this._navigation.init().render());
+    this._ui.wrapper.appendChild(this._pagination.init().render());
+
+    if (this.options.navigationSwipe) {
+      this._swipe.bindEvents();
     } else {
-      return this.items[0];
+      this._swipe._bindEvents();
+    }
+
+    this._breakpoint.apply();
+    // Move all created slides into slider
+    this._slides.forEach(slide => this._ui.container.appendChild(slide));
+    this._transitioner.init().apply(true, this._setHeight.bind(this));
+
+    if (this.options.autoplay) {
+      this._autoplay.init().start();
     }
   }
 
   /**
-   * Find previous item to display
-   * @method _previous
-   * @param  {Node}  element Current Node element
-   * @return {Node}          Previous Node element
+   * Destroy Slider
+   * @method destroy
    */
-  _previous(element) {
-    if (element.previousElementSibling) {
-      return element.previousElementSibling;
-    } else {
-      return this.items[this.items.length - 1];
-    }
-  }
-
-  /**
-   * Update slides to display the wanted one
-   * @method _slide
-   * @param  {String} [direction='next'] Direction in which items need to move
-   * @return {void}
-   */
-  _slide(direction = 'next') {
-    if (this.items.length) {
-      this.oldItemNode = this.currentItem.node;
-      this.emit(BULMA_CAROUSEL_EVENTS.slideBefore, this.currentItem);
-      if(this.options.stopautoplayoninteraction) {
-        clearInterval(this._autoPlayInterval);
-      }
-      // initialize direction to change order
-      if (direction === 'previous') {
-        this.currentItem.node = this._previous(this.currentItem.node);
-        // add reverse class
-        if (!this.element.classList.contains('carousel-animate-fade')) {
-          this.element.classList.add('is-reversing');
-          this.container.style.transform = `translateX(${ - Math.abs(this.offset)}px)`;
-        }
-      } else {
-        // Reorder items
-        this.currentItem.node = this._next(this.currentItem.node);
-        // re_slide reverse class
-        this.element.classList.remove('is-reversing');
-        this.container.style.transform = `translateX(${Math.abs(this.offset)}px)`;
-      }
-      this.currentItem.node.classList.add('is-active');
-      this.oldItemNode.classList.remove('is-active');
-
-      // Disable transition to instant change order
-      this.element.classList.remove('carousel-animated');
-      // Enable transition to animate order 1 to order 2
-      setTimeout(() => {
-        this.element.classList.add('carousel-animated');
-      }, 50);
-
-      this._setOrder();
-      this.emit(BULMA_CAROUSEL_EVENTS.slideAfter, this.currentItem);
-    }
-  }
-
-  /**
-   * Initiate autoplay system
-   * @method _autoPlay
-   * @param  {Number}  [delay=5000] Delay between slides in milliseconds
-   * @return {void}
-   */
-  _autoPlay(delay = 5000) {
-    this._autoPlayInterval = setInterval(() => {
-      this._slide('next');
-    }, delay);
+  destroy() {
+    this._unbindEvents();
+    this._items.forEach(item => {
+      this.element.appendChild(item);
+    });
+    this.node.remove();
   }
 }
