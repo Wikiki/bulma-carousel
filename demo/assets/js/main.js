@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+ready(function () {
   bulmaCarousel.attach('#slider', {
     slidesToScroll: 1,
     slidesToShow: 4,

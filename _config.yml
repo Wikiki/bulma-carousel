@@ -1,8 +1,9 @@
 # Variables
-title:         "bulmaCarousel"
+title:         "bulma-carousel"
 description:   ""
-version:       1.0.0
+version:       4.0.1
 env:           "production"
+# url:            https://demo.creativebulma.net/components/carousel/
 
 # Build
 markdown:      kramdown

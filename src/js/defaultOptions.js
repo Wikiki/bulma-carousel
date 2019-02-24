@@ -34,7 +34,9 @@ const defaultOptions = {
       slidesToShow: 3,
       slidesToScroll: 3
     }
-  ]
+  ],
+
+  onReady: null
 };
 
 export default defaultOptions;

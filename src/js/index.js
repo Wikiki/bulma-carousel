@@ -8,7 +8,8 @@ import {
   outerHeight
 } from './utils/css';
 import {
-  isString
+  isString,
+  isFunction
 } from './utils/type';
 import EventEmitter from './utils/eventEmitter';
 
@@ -106,7 +107,9 @@ export default class bulmaCarousel extends EventEmitter {
 
     this._build();
 
-    this.emit('ready', this);
+    if (isFunction(this.options.onReady)) {
+      this.options.onReady(this);
+    }
 
     return this;
   }
@@ -292,6 +295,7 @@ export default class bulmaCarousel extends EventEmitter {
     return this._transitioner;
   }
 
+  
   /****************************************************
    *                                                  *
    * EVENTS FUNCTIONS                                 *

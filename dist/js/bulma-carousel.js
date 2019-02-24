@@ -170,7 +170,7 @@ var css = function css(element, obj) {
 	if (!obj) {
 		return window.getComputedStyle(element);
 	}
-	if (Object(__WEBPACK_IMPORTED_MODULE_0__type__["a" /* isObject */])(obj)) {
+	if (Object(__WEBPACK_IMPORTED_MODULE_0__type__["b" /* isObject */])(obj)) {
 		var style = '';
 		Object.keys(obj).forEach(function (key) {
 			style += key + ': ' + obj[key] + ';';
@@ -185,10 +185,11 @@ var css = function css(element, obj) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return isFunction; });
 /* unused harmony export isNumber */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return isString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return isString; });
 /* unused harmony export isDate */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return isObject; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return isObject; });
 /* unused harmony export isEmptyObject */
 /* unused harmony export isNode */
 /* unused harmony export isVideo */
@@ -198,6 +199,9 @@ var css = function css(element, obj) {
 /* unused harmony export isVimeo */
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
+var isFunction = function isFunction(unknown) {
+	return typeof unknown === 'function';
+};
 var isNumber = function isNumber(unknown) {
 	return typeof unknown === "number";
 };
@@ -481,7 +485,7 @@ var bulmaCarousel = function (_EventEmitter) {
 
     var _this = _possibleConstructorReturn(this, (bulmaCarousel.__proto__ || Object.getPrototypeOf(bulmaCarousel)).call(this));
 
-    _this.element = Object(__WEBPACK_IMPORTED_MODULE_2__utils_type__["b" /* isString */])(selector) ? document.querySelector(selector) : selector;
+    _this.element = Object(__WEBPACK_IMPORTED_MODULE_2__utils_type__["c" /* isString */])(selector) ? document.querySelector(selector) : selector;
     // An invalid selector or non-DOM node has been provided.
     if (!_this.element) {
       throw new Error('An invalid selector or non-DOM node has been provided.');
@@ -541,7 +545,9 @@ var bulmaCarousel = function (_EventEmitter) {
 
       this._build();
 
-      this.emit('ready', this);
+      if (Object(__WEBPACK_IMPORTED_MODULE_2__utils_type__["a" /* isFunction */])(this.options.onReady)) {
+        this.options.onReady(this);
+      }
 
       return this;
     }
@@ -921,7 +927,7 @@ var bulmaCarousel = function (_EventEmitter) {
 
       var instances = new Array();
 
-      var elements = Object(__WEBPACK_IMPORTED_MODULE_2__utils_type__["b" /* isString */])(selector) ? document.querySelectorAll(selector) : Array.isArray(selector) ? selector : [selector];
+      var elements = Object(__WEBPACK_IMPORTED_MODULE_2__utils_type__["c" /* isString */])(selector) ? document.querySelectorAll(selector) : Array.isArray(selector) ? selector : [selector];
       [].forEach.call(elements, function (element) {
         if (typeof element[_this7.constructor.name] === 'undefined') {
           var instance = new bulmaCarousel(element, options);
@@ -2281,7 +2287,9 @@ var defaultOptions = {
     changePoint: 768,
     slidesToShow: 3,
     slidesToScroll: 3
-  }]
+  }],
+
+  onReady: null
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (defaultOptions);

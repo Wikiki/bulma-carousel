@@ -1,3 +1,4 @@
+export const isFunction = unknown => typeof unknown === 'function';
 export const isNumber = unknown => typeof unknown === "number";
 export const isString = unknown => (typeof unknown === 'string' || ((!!unknown && typeof unknown === 'object') && Object.prototype.toString.call(unknown) === '[object String]'));
 export const isDate = unknown => (Object.prototype.toString.call(unknown) === '[object Date]' || unknown instanceof Date) && !isNaN(unknown.valueOf());
