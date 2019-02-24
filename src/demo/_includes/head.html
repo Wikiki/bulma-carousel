@@ -1,0 +1,21 @@
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% else %}{{ site.description }}{% endif %}">
+
+  <title>{{site.title}}</title>
+
+  <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.url }}">
+
+  <!-- Load main hexalight css -->
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.css" rel="stylesheet">
+  <link href="{{ site.url }}/assets/css/main.css" rel="stylesheet">
+  <link href="{{ site.url }}/assets/css/bulmaCarousel.min.css" rel="stylesheet">
+
+  <!-- Load Font Awesome 5 -->
+  <script defer src="https://use.fontawesome.com/releases/v5.0.4/js/all.js"></script>
+
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+</head>

@@ -1,0 +1,17 @@
+# Variables
+title:         "bulmaCarousel"
+description:   ""
+version:       1.0.0
+env:           "production"
+
+# Build
+markdown:      kramdown
+permalink:     pretty
+includes:      ['assets/css', 'assets/js']
+exclude:       ['package.json']
+sass:
+  sass_dir:    _sass
+  style:       compressed
+
+# Icons
+fontawesome:   https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css

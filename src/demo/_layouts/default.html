@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" class="{% if page.fixed-navbar %}has-navbar-fixed-top{% endif %} {% if page.route %}route-{{page.route}}{% elsif page.layout %}route-{{page.layout}}{% endif %}">
+{% include head.html %}
+
+<body>
+  {% include menu-mobile.html %}
+  {% include navbar.html %}
+
+  {{ content }}
+
+  {% include foot.html %}
+  <script src="{{site.url}}/assets/js/bulmaCarousel.min.js"></script>
+  <script src="{{site.url}}/assets/js/main.js"></script>
+</body>
+
+</html>
