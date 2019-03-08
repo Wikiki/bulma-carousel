@@ -1,11 +1,13 @@
 import template from '../templates/pagination';
 import templatePage from '../templates/pagination-page';
+import detectSupportsPassive from '../utils/detect-supportsPassive';
 
 export default class Pagination {
 	constructor(slider) {
 		this.slider = slider;
 
 		this._clickEvents = ['click', 'touch'];
+		this._supportsPassive = detectSupportsPassive();
 
 		this.onPageClick = this.onPageClick.bind(this);
 		this.onResize = this.onResize.bind(this);
@@ -62,7 +64,9 @@ export default class Pagination {
 	}
 
 	onPageClick(e) {
-		e.preventDefault();
+		if (!this._supportsPassive) {
+			e.preventDefault();
+		}
 
 		this.slider.state.next = e.currentTarget.dataset.index;
 		this.slider.show();

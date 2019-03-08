@@ -1,8 +1,11 @@
 import Coordinate from '../utils/coordinate';
+import detectSupportsPassive from '../utils/detect-supportsPassive';
 
 export default class Swipe {
 	constructor(slider) {
 		this.slider = slider;
+
+		this._supportsPassive = detectSupportsPassive();
 
 		this.onStartDrag = this.onStartDrag.bind(this);
 		this.onMoveDrag = this.onMoveDrag.bind(this);
@@ -14,7 +17,11 @@ export default class Swipe {
 	_init() {}
 
 	bindEvents() {
-		this.slider.container.addEventListener('dragstart', e => e.preventDefault());
+		this.slider.container.addEventListener('dragstart', e => {
+			if (!this._supportsPassive) {
+				e.preventDefault();
+			}
+		});
 		this.slider.container.addEventListener('mousedown', this.onStartDrag);
 		this.slider.container.addEventListener('touchstart', this.onStartDrag);
 
@@ -27,7 +34,11 @@ export default class Swipe {
 	}
 
 	unbindEvents() {
-		this.slider.container.removeEventListener('dragstart', e => e.preventDefault());
+		this.slider.container.removeEventListener('dragstart', e => {
+			if (!this._supportsPassive) {
+				e.preventDefault();
+			}
+		});
 		this.slider.container.removeEventListener('mousedown', this.onStartDrag);
 		this.slider.container.removeEventListener('touchstart', this.onStartDrag);
 
@@ -65,8 +76,10 @@ export default class Swipe {
 			this._lastTranslate = new Coordinate(point.screenX - this._origin.x, point.screenY - this._origin.y);
 			if (e.touches) {
 				if (Math.abs(this._lastTranslate.x) > Math.abs(this._lastTranslate.y)) {
-					e.preventDefault();
-					e.stopPorpagation();
+					if (!this._supportsPassive) {
+						e.preventDefault();
+					}
+					e.stopPropagation();
 				}
 			}
 		}

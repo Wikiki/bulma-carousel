@@ -1,10 +1,12 @@
 import template from '../templates/navigation';
+import detectSupportsPassive from '../utils/detect-supportsPassive';
 
 export default class Navigation {
 	constructor(slider) {
 		this.slider = slider;
 
 		this._clickEvents = ['click', 'touch'];
+		this._supportsPassive = detectSupportsPassive();
 
 		this.onPreviousClick = this.onPreviousClick.bind(this);
 		this.onNextClick = this.onNextClick.bind(this);
@@ -47,7 +49,9 @@ export default class Navigation {
 	}
 
 	onNextClick(e) {
-		e.preventDefault();
+		if (!this._supportsPassive) {
+			e.preventDefault();
+		}
 
 		if (this.slider.options.navigation) {
 			this.slider.next();
@@ -55,7 +59,9 @@ export default class Navigation {
 	}
 
 	onPreviousClick(e) {
-		e.preventDefault();
+		if (!this._supportsPassive) {
+			e.preventDefault();
+		}
 
 		if (this.slider.options.navigation) {
 			this.slider.previous();
