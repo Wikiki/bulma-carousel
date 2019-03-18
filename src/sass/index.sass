@@ -46,6 +46,9 @@
 
 .slider-navigation-previous,
 .slider-navigation-next
+	display: flex
+	justify-content: center
+	align-items: center
 	position: absolute
 	width: 42px
 	height: 42px
@@ -64,6 +67,8 @@
 	&.is-hidden
 		display: none
 		opacity: 0
+	svg
+		width: 25%
 .slider-navigation-next
 	left: auto
 	right: 0px
@@ -100,16 +105,16 @@
 
 // Hero Carousel
 =hero-carousel
-  position: absolute
-  top: 0
-  left: 0
-  bottom: 0
-  right: 0
-  height: auto
-  border: none
-  margin: auto
-  padding: 0
-  z-index: 0
+	position: absolute
+	top: 0
+	left: 0
+	bottom: 0
+	right: 0
+	height: auto
+	border: none
+	margin: auto
+	padding: 0
+	z-index: 0
 
 .hero
 	&.has-carousel
