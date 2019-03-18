@@ -125,6 +125,8 @@
 
 
 
+
+
 <a href="#features" id="features" class="title is-4 has-text-weight-normal is-spaced anchor">
   <span class="anchor-name">Features</span>
 </a>
@@ -230,11 +232,34 @@
 
 <section class="section is-paddingless">
 	<p>The best way to start with carousel is to use a simple div to encaspulate your items. All child will then be used as Carousel Item. date input:</p>
-	<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"carousel"</span><span class="nt">&gt;</span>
+	<div class="tabs">
+		<ul>
+			<li class="is-active"><a href="#classic-carousel">Classic Carousel</a></li>
+			<li><a href="#hero-carousel">Hero Carousel</a></li>
+		</ul>
+	</div>
+
+	<div class="tab-contents">
+		<div id="classic-carousel" class="tab-content is-active">
+			<p><figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"carousel"</span><span class="nt">&gt;</span>
 	<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-1"</span><span class="nt">&gt;&lt;/div&gt;</span>
 	<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-2"</span><span class="nt">&gt;&lt;/div&gt;</span>
 	<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-3"</span><span class="nt">&gt;&lt;/div&gt;</span>
-<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure></p>
+		</div>
+		<div id="hero-carousel" class="tab-content">
+			<p><figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;section</span> <span class="na">class=</span><span class="s">"hero is-medium has-carousel"</span><span class="nt">&gt;</span>
+	<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"hero-carousel"</span><span class="nt">&gt;</span>
+		<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-1"</span><span class="nt">&gt;&lt;/div&gt;</span>
+		<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-2"</span><span class="nt">&gt;&lt;/div&gt;</span>
+		<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-3"</span><span class="nt">&gt;&lt;/div&gt;</span>
+	<span class="nt">&lt;/div&gt;</span>
+	<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"hero-head"</span><span class="nt">&gt;&lt;/div&gt;</span>
+	<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"hero-body"</span><span class="nt">&gt;&lt;/div&gt;</span>
+	<span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"hero-foot"</span><span class="nt">&gt;&lt;/div&gt;</span>
+<span class="nt">&lt;/section&gt;</span></code></pre></figure></p>
+		</div>
+	</div>
 </section>
 
 <a href="#integration" id="integration" class="title is-4 has-text-weight-normal is-spaced anchor">
@@ -297,12 +322,16 @@
 		</li>
 		<li>
 			<h6 class="title is-6">Initiate component</h6>
-			<p>Now all that remains is to intiate the component to all elements you want to transform into a Carousel /
-				DatePicker</p>
+			<p>Now all that remains is to intiate the component to all elements you want to transform into a Carousel</p>
 			<article class="message is-warning">
 				<div class="message-body">
-					The <code>attach()</code> method <strong>always</strong> return an array of datepicker instances (even if it
+					The <code>attach()</code> method <strong>always</strong> return an array of Carousel instances (even if it
 					targets only one element).
+				</div>
+			</article>
+			<article class="message is-warning">
+				<div class="message-body">
+					Instantiation method is the same for classic & hero carousel.
 				</div>
 			</article>
 			<div class="tabs">

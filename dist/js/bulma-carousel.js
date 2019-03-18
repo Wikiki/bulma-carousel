@@ -1515,7 +1515,7 @@ var Navigation = function () {
 	_createClass(Navigation, [{
 		key: 'init',
 		value: function init() {
-			this.node = document.createRange().createContextualFragment(Object(__WEBPACK_IMPORTED_MODULE_0__templates_navigation__["a" /* default */])());
+			this.node = document.createRange().createContextualFragment(Object(__WEBPACK_IMPORTED_MODULE_0__templates_navigation__["a" /* default */])(this.slider.options.icons));
 			this._ui = {
 				previous: this.node.querySelector('.slider-navigation-previous'),
 				next: this.node.querySelector('.slider-navigation-next')
@@ -1629,8 +1629,8 @@ var Navigation = function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony default export */ __webpack_exports__["a"] = (function () {
-	return "<div class=\"slider-navigation-previous\"></div>\n<div class=\"slider-navigation-next\"></div>";
+/* harmony default export */ __webpack_exports__["a"] = (function (icons) {
+	return "<div class=\"slider-navigation-previous\">" + icons.previous + "</div>\n<div class=\"slider-navigation-next\">" + icons.next + "</div>";
 });
 
 /***/ }),
@@ -2072,6 +2072,7 @@ var Fade = function () {
 						position: 'absolute',
 						left: 0,
 						top: 0,
+						bottom: 0,
 						'z-index': slide.dataset.sliderIndex == _this.slider.state.index ? 0 : -2,
 						opacity: slide.dataset.sliderIndex == _this.slider.state.index ? 1 : 0
 					});
@@ -2338,7 +2339,11 @@ var defaultOptions = {
     slidesToScroll: 3
   }],
 
-  onReady: null
+  onReady: null,
+  icons: {
+    'previous': '<svg viewBox="0 0 50 80" xml:space="preserve">\n      <polyline fill="currentColor" stroke-width=".5em" stroke-linecap="round" stroke-linejoin="round" points="45.63,75.8 0.375,38.087 45.63,0.375 "/>\n    </svg>',
+    'next': '<svg viewBox="0 0 50 80" xml:space="preserve">\n      <polyline fill="currentColor" stroke-width=".5em" stroke-linecap="round" stroke-linejoin="round" points="0.375,0.375 45.63,38.087 0.375,75.8 "/>\n    </svg>'
+  }
 };
 
 /* harmony default export */ __webpack_exports__["a"] = (defaultOptions);

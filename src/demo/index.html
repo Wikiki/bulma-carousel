@@ -36,6 +36,19 @@ import bulmaCarousel from '~bulma-carousel/dist/js/bulma-carousel.min.js';
 </div>
 {% endcapture %}
 
+{% capture component_hero_example %}
+<section class="hero is-medium has-carousel">
+	<div class="hero-carousel">
+		<div class="item-1"></div>
+		<div class="item-2"></div>
+		<div class="item-3"></div>
+	</div>
+	<div class="hero-head"></div>
+	<div class="hero-body"></div>
+	<div class="hero-foot"></div>
+</section>
+{% endcapture %}
+
 {% capture component_dataset %}
 BLOP
 {% endcapture %}
@@ -167,7 +180,21 @@ if (element) {
 {% include anchor.html name="HTML Structure" %}
 <section class="section is-paddingless">
 	<p>The best way to start with carousel is to use a simple div to encaspulate your items. All child will then be used as Carousel Item. date input:</p>
-	{% highlight html %}{{ component_example }}{% endhighlight %}
+	<div class="tabs">
+		<ul>
+			<li class="is-active"><a href="#classic-carousel">Classic Carousel</a></li>
+			<li><a href="#hero-carousel">Hero Carousel</a></li>
+		</ul>
+	</div>
+
+	<div class="tab-contents">
+		<div id="classic-carousel" class="tab-content is-active">
+			<p>{% highlight html %}{{ component_example }}{% endhighlight %}</p>
+		</div>
+		<div id="hero-carousel" class="tab-content">
+			<p>{% highlight html %}{{ component_hero_example }}{% endhighlight %}</p>
+		</div>
+	</div>
 </section>
 
 {% include anchor.html name="Integration" %}
@@ -221,12 +248,16 @@ if (element) {
 		</li>
 		<li>
 			<h6 class="title is-6">Initiate component</h6>
-			<p>Now all that remains is to intiate the component to all elements you want to transform into a Carousel /
-				DatePicker</p>
+			<p>Now all that remains is to intiate the component to all elements you want to transform into a Carousel</p>
 			<article class="message is-warning">
 				<div class="message-body">
-					The <code>attach()</code> method <strong>always</strong> return an array of datepicker instances (even if it
+					The <code>attach()</code> method <strong>always</strong> return an array of Carousel instances (even if it
 					targets only one element).
+				</div>
+			</article>
+			<article class="message is-warning">
+				<div class="message-body">
+					Instantiation method is the same for classic & hero carousel.
 				</div>
 			</article>
 			<div class="tabs">

@@ -18,6 +18,7 @@ export default class Fade {
 					position: 'absolute',
 					left: 0,
 					top: 0,
+					bottom: 0,
 					'z-index': slide.dataset.sliderIndex == this.slider.state.index ? 0 : -2,
 					opacity: slide.dataset.sliderIndex == this.slider.state.index ? 1 : 0
 				});
