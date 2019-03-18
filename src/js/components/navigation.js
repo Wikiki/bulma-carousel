@@ -14,7 +14,7 @@ export default class Navigation {
 	}
 
 	init() {
-		this.node = document.createRange().createContextualFragment(template());
+		this.node = document.createRange().createContextualFragment(template(this.slider.options.icons));
 		this._ui = {
 			previous: this.node.querySelector('.slider-navigation-previous'),
 			next: this.node.querySelector('.slider-navigation-next')
