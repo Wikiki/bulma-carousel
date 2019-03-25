@@ -1,6 +1,3 @@
-- name: 'ready'
-  description: 'Triggered when carousel is intialized (DO NOT USE IT but pass callback into the onReady option)'
-  parameters: 'bulmaCarousel State object instance'
 - name: 'before:show'
   description: 'Triggered before showing item'
   parameters: 'bulmaCarousel State object instance'

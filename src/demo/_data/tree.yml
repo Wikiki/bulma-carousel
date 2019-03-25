@@ -4,16 +4,16 @@
   - name: css
     open: true
     subtree:
-    - name: bulma-calendar.min.css
+    - name: bulma-carousel.min.css
       details: Minified version of all required CSS in one file
-    - name: bulma-calendar.sass
+    - name: bulma-carousel.sass
       details: Copy of Sass sources from src/
   - name: js
     open: true
     subtree:
-      - name: bulma-calendar.js
+      - name: bulma-carousel.js
         details: JavaScript code
-      - name: bulma-calendar.min.js
+      - name: bulma-carousel.min.js
         details: Minified version of JavaScript code
 - name: src
   open: true

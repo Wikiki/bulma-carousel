@@ -28,29 +28,93 @@ subtitle: bulma.io Carousel/Slider component
 import bulmaCarousel from '~bulma-carousel/dist/js/bulma-carousel.min.js';
 {% endcapture %}
 
-{% capture component_example %}
-<div class="carousel">
+{% capture component_starter_template %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Hello Bulma!</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
+	</head>
+  	<body>
+		<section class="section">
+			<div class="container">
+				<!-- Start Carousel -->
+				<div id="carousel-demo" class="carousel">
+					<div class="item-1">
+						<!-- Slide Content -->
+					</div>
+					<div class="item-2">
+						<!-- Slide Content -->
+					</div>
+					<div class="item-3">
+						<!-- Slide Content -->
+					</div>
+				</div>
+				<!-- End Carousel -->
+			</div>
+		</section>
+
+		<script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/js/bulma-carousel.min.js"></script>
+		<script>
+		bulmaCarousel.attach('#carousel-demo', {
+			slidesToScroll: 1,
+			slidesToShow: 4
+		});
+		</script>
+	</body>
+</html>
+{% endcapture %}
+
+{% capture component_hero_starter_template %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Hello Bulma!</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/css/bulma-carousel.min.css">
+	</head>
+	<body>
+		<!-- Start Hero Carousel -->
+		<section class="hero is-medium has-carousel">
+			<div id="carousel-demo" class="hero-carousel">
+				<div class="item-1">
+					<!-- Slide Content -->
+				</div>
+				<div class="item-2">
+					<!-- Slide Content -->
+				</div>
+				<div class="item-3">
+					<!-- Slide Content -->
+				</div>
+			</div>
+			<div class="hero-head"></div>
+			<div class="hero-body"></div>
+			<div class="hero-foot"></div>
+		</section>
+		<!-- End Hero Carousel -->
+
+		<script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.3/dist/js/bulma-carousel.min.js"></script>
+		<script>
+			bulmaCarousel.attach('#carousel-demo', {
+				slidesToScroll: 1,
+				slidesToShow: 4
+			});
+		</script>
+	</body>
+</html>
+{% endcapture %}
+
+{% capture component_dataset %}
+<div class="carousel" data-slides-to-scroll="2">
 	<div class="item-1"></div>
 	<div class="item-2"></div>
 	<div class="item-3"></div>
 </div>
-{% endcapture %}
-
-{% capture component_hero_example %}
-<section class="hero is-medium has-carousel">
-	<div class="hero-carousel">
-		<div class="item-1"></div>
-		<div class="item-2"></div>
-		<div class="item-3"></div>
-	</div>
-	<div class="hero-head"></div>
-	<div class="hero-body"></div>
-	<div class="hero-foot"></div>
-</section>
-{% endcapture %}
-
-{% capture component_dataset %}
-BLOP
 {% endcapture %}
 
 {% capture component_init_es5 %}
@@ -65,9 +129,9 @@ for(var i = 0; i < carousels.length; i++) {
 	});
 }
 
-// To access to bulmaCarousel instance of an element
+// Access to bulmaCarousel instance of an element
 var element = document.querySelector('#my-element');
-if (element) {
+if (element && element.bulmaCarousel) {
 	// bulmaCarousel instance is available as element.bulmaCarousel
 	element.bulmaCarousel.on('before-show', function(state) {
 		console.log(state);
@@ -76,13 +140,35 @@ if (element) {
 {% endcapture %}
 
 {% capture component_init_es6 %}
-// Initialize all input of date type.
+// Initialize all elements with carousel class.
 const carousels = bulmaCarousel.attach('.carousel', options);
 
 // To access to bulmaCarousel instance of an element
 const element = document.querySelector('#my-element');
-if (element) {
+if (element && element.bulmaCarousel) {
 	// bulmaCarousel instance is available as element.bulmaCarousel
+}
+{% endcapture %}
+
+{% capture component_instance_access %}
+// Access to bulmaCarousel instance of an element
+var element = document.querySelector('#my-element');
+if (element && element.bulmaCarousel) {
+	// bulmaCarousel instance is available as element.bulmaCarousel
+}
+{% endcapture %}
+
+{% capture component_events %}
+// Initialize all elements with carousel class.
+const carousels = bulmaCarousel.attach('.carousel', options);
+
+// To access to bulmaCarousel instance of an element
+const element = document.querySelector('#my-element');
+if (element && element.bulmaCarousel) {
+	// bulmaCarousel instance is available as element.bulmaCarousel
+	element.bulmaCarousel.on('show', function(bulmaCarouselInstance) {
+		console.log(bulmaCarouselInstance.index);
+	});
 }
 {% endcapture %}
 
@@ -167,19 +253,10 @@ if (element) {
 	</div>
 </section>
 
-{% include anchor.html name="Content" %}
+{% include anchor.html name="Starter Template" %}
 <section class="section is-paddingless">
-	<p>The component comes with various files:</p>
-	<div class="file-tree">
-
-	</div>
-	<p>Depending on your need your can use either pre-compiled files from <code>dist</code> directory or sources from
-		<code>src</code> directory.</p>
-</section>
-
-{% include anchor.html name="HTML Structure" %}
-<section class="section is-paddingless">
-	<p>The best way to start with carousel is to use a simple div to encaspulate your items. All child will then be used as Carousel Item. date input:</p>
+	<p>If you want to get started right away, you can use this HTML starter template. Just copy/paste this code in a file and save it on your computer. </p>
+	<p>The best way to start with carousel is to use a simple div to encaspulate your items. All child will then be used as Carousel Item:</p>
 	<div class="tabs">
 		<ul>
 			<li class="is-active"><a href="#classic-carousel">Classic Carousel</a></li>
@@ -189,10 +266,10 @@ if (element) {
 
 	<div class="tab-contents">
 		<div id="classic-carousel" class="tab-content is-active">
-			<p>{% highlight html %}{{ component_example }}{% endhighlight %}</p>
+			<p>{% highlight html %}{{ component_starter_template }}{% endhighlight %}</p>
 		</div>
 		<div id="hero-carousel" class="tab-content">
-			<p>{% highlight html %}{{ component_hero_example }}{% endhighlight %}</p>
+			<p>{% highlight html %}{{ component_hero_starter_template }}{% endhighlight %}</p>
 		</div>
 	</div>
 </section>
@@ -285,8 +362,7 @@ if (element) {
 <article class="message is-info">
 	<div class="message-body">
 		Options can be set using input data attributes. Just convert option name to dashes.<br />
-		<i>For example if you want to init a deta picker using inline display style with range capability and a validate
-			button:</i>
+		<i>For example if you want to init a carousel with SlidesToScroll option set to "2":</i>
 		{% highlight html %}{{ component_dataset }}{% endhighlight %}
 	</div>
 </article>
@@ -301,10 +377,20 @@ if (element) {
 <section class="section is-paddingless">
 	<p>Carousel component provides some public Getters to manually access properties.</p>
 	{% include getters.html %}
+
+	<article class="message is-info">
+		<div class="message-body">
+			<p>Reminder: You can easily access to bulmaCarousel instance from a DOM element using the following code:</p>
+			{% highlight javascript %}{{ component_instance_access }}{% endhighlight %}
+		</div>
+	</article>	
 </section>
 
 {% include anchor.html name="Events" %}
 <section class="section is-paddingless">
 	<p>Carousel component comes with Events Management API so you can easily react to its behavior.</p>
 	{% include events.html %}
+	
+	<p>Example working with "show" event:</p>
+	{% highlight javascript %}{{ component_events }}{% endhighlight %}
 </section>

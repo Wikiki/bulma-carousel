@@ -6,10 +6,8 @@
       link: '#features'
     - name: Installation
       link: '#installation'
-    - name: Content
-      link: '#content'
-    - name: HTML Structure
-      link: '#html-structure'
+    - name: Starter Template
+      link: '#starter-template'
     - name: Integration
       link: '#integration'
     - name: Options

@@ -4,7 +4,7 @@
   "main": "dist/js/bulma-carousel.js",
   "style": "dist/css/bulma-carousel.min.css",
   "sass": "src/sass/index.sass",
-  "version": "4.0.3",
+  "version": "4.0.4",
   "scripts": {
     "build": "gulp",
     "commit": "git-cz",
