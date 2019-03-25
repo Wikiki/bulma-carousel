@@ -3,7 +3,7 @@
   "description": "Display a Image / Content carousel",
   "main": "dist/js/bulma-carousel.js",
   "style": "dist/css/bulma-carousel.min.css",
-  "sass": "dist/sass/index.scss",
+  "sass": "src/sass/index.sass",
   "version": "4.0.3",
   "scripts": {
     "build": "gulp",
