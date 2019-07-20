@@ -348,7 +348,7 @@ export default class bulmaCarousel extends EventEmitter {
       return;
     }
 
-    if (typeof index === 'Number') {
+    if (typeof index === 'number') {
       this.state.next = index;
     }
 
