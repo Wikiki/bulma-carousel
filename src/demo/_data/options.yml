@@ -21,11 +21,11 @@
 - name: 'navigationSwipe'
   type: Boolean
   description: 'Enable swipe navigation'
-  value: 'MM/DD/YYYY'
+  value: 'true'
 - name: 'pagination'
   type: Boolean
   description: 'Display pagination bullets'
-  value: 'HH:mm'
+  value: 'true'
 - name: 'loop'
   type: Boolean
   description: 'Activate loop display mode'
