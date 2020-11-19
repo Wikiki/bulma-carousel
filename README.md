@@ -1,6 +1,5 @@
 # bulma-carousel
 Bulma's extension to display a Carousel
-(find all my bulma's extensions [here](https://wikiki.github.io/))
 
 [![npm](https://img.shields.io/npm/v/bulma-carousel.svg)](https://www.npmjs.com/package/bulma-carousel)
 [![npm](https://img.shields.io/npm/dm/bulma-carousel.svg)](https://www.npmjs.com/package/bulma-carousel)
@@ -11,4 +10,4 @@ As you may have noticed, this package has not been updated for some time. I'm so
 
 Documentation & Demo
 ---
-You can find the Documentation and a demo [here](https://creativebulma.net/product/carousel)
+You can find the Documentation and a demo [here](https://bulma-carousel.onrender.com/)
