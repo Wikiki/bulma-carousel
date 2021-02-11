@@ -14,7 +14,7 @@ export default class Infinite {
 			let frontClones = [];
 			let slideIndex = 0;
 			for (let i = this.slider.state.length; i > (this.slider.state.length - 1 - this._infiniteCount); i -= 1) {
-				slideIndex = i - 1;
+				slideIndex = (this.slider.state.length * Math.floor(this._infiniteCount / this.slider.state.length) + i - 1) % this.slider.state.length;
 				frontClones.unshift(this._cloneSlide(this.slider.slides[slideIndex], slideIndex - this.slider.state.length));
 			}
 
