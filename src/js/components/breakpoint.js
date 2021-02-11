@@ -84,6 +84,8 @@ export default class Breakpoints {
 		if (newBreakPoint.slidesToShow !== this._currentBreakpoint.slidesToShow) {
 			this._currentBreakpoint = newBreakPoint;
 			this.apply();
+		} else {
+			this.slider._setDimensions();
 		}
 	}
 }
